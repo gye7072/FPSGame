@@ -7,8 +7,10 @@ public class Enemy extends Rectangle{
 
     private int dx;
     private int dy;
-    private Color color;
+
     private ArrayList<Bullet> b2 = new ArrayList<Bullet>();
+    private Color color;
+    private boolean shoot;
 
     private BufferedImage image;
     public Enemy(Color color, int x, int y, int width, int height, int dx, int dy) {
@@ -17,26 +19,33 @@ public class Enemy extends Rectangle{
         this.dx = dx;
         this.dy = dy;
         setDx(-5);
+        shoot = true;
     }
 
 
     public void tick(){
+
         this.x += dx;
         this.y += dy;
-//        // add some probability for the enemy to shoot
-//        shoot();
+        int random = (int) (Math.random() * 10);
+        if(random >= 5){
+            shoot = true;
+        }
     }
-
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillRect(this.x, this.y, this.width, this.height);
+        if(shoot){
+            Bullet bullet = new Bullet(Color.BLACK, this.x + this.width / 2, this.y + this.height / 2, 5, 5, 0, 0);
+            b2.add(bullet);
+            bullet.setDx(-5);
+            shoot = false;
+        }
     }
 
-//    public void shoot() {
-//        Bullet bullet = new Bullet(Color.BLACK, this.x + this.width / 2, this.y + this.height / 2, 5, 5, 0, 0);
-//        b2.add(bullet);
-//        bullet.setDx(5);
-//    }
+    public ArrayList<Bullet> getB2(){
+        return b2;
+    }
 
     public void setDx(int dx){
         this.dx = dx;

@@ -45,19 +45,9 @@ public class Player extends Rectangle{
     public int getLives(){
         return lives;
     }
-//
-//    //check collison with enemy bullets
-//    public void checkCollisonWithBullets(ArrayList<Bullet> bullets) {
-//        for (Bullet bullet : bullets) {
-//            if (this.intersects(bullet)) {
-//                // player is hit, lose a life
-//                lives--;
-//                // remove the bullet
-//                bullets.remove(bullet);
-//                break;
-//            }
-//        }
-//    }
+    public void lostLife(){
+        lives--;
+    }
 
     public void setLives(int i){
         lives = i;

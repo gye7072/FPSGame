@@ -13,6 +13,8 @@ public class EnemyController {
     private long spawnDelay;
     private int enemySpeed;
     private boolean spawnEnabled;
+
+    
     public EnemyController(int enemyCount, int enemyKilled) {
         this.enemyCount = enemyCount;
         this.enemyKilled = enemyKilled;

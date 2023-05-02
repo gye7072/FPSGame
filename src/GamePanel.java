@@ -143,6 +143,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Draw the enemies
         for (Enemy enemy : enemyController.getEnemyList()) {
             enemy.draw(g);
+            for(int i = 0; i < enemy.getB2().size(); i++){
+                enemy.getB2().get(i).draw(g);
+            }
         }
         drawStats(g);
         if (!gameOver) {
@@ -190,6 +193,23 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             waveNumber++;
             waveOver = true;
         }
+
+        for(Enemy e : enemyController.getEnemyList()){
+            for(int i = 0; i < e.getB2().size(); i++){
+                if(e.getB2().get(i).x >= player1.x && e.getB2().get(i).x <= player1.x + player1.width &&
+                        e.getB2().get(i).y >= player1.y && e.getB2().get(i).y <= player1.y + player1.height){
+                    player1.lostLife();
+                    e.getB2().remove(i);
+                    i--;
+                }
+            }
+        }
+
+
+
+
+
+
 
     }
 

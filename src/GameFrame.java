@@ -1,6 +1,11 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * The GameFrame class represents the main frame for the 1v1 shooter game.
@@ -12,11 +17,16 @@ public class GameFrame extends JFrame implements ActionListener {
     private JButton helpButton;
     private JButton leaderBoardButton;
     private JButton quitButton;
+    private static final String SCORES_FILE = "scores.txt";
+    private static final int NUM_HIGH_SCORES = 10;
+    private static int firstTime;
+    private static GamePanel gamePanel;
+    private static JFrame gameFrame;
+    private int score;
 
-    /**
-     * Constructs a new instance of the GameFrame class.
-     */
     public GameFrame() {
+
+
         setContentPane(mainPanel);
         setTitle("Invaders");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,26 +43,91 @@ public class GameFrame extends JFrame implements ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
+
         // Handle button clicks
         if (e.getSource() == playButton) {
             // Start the game
-            GamePanel gamePanel = new GamePanel();
-            JFrame gameFrame = new JFrame("Invaders");
-            gameFrame.add(gamePanel);
-            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            gameFrame.setResizable(false);
-            gameFrame.pack();
-            gameFrame.setLocationRelativeTo(null);
-            gameFrame.setVisible(true);
+            this.dispose();
+            if(firstTime == 0) {
+                gamePanel = new GamePanel();
+                gameFrame = new JFrame("Invaders");
+                gameFrame.add(gamePanel);
+                gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                gameFrame.setResizable(false);
+                gameFrame.pack();
+                gameFrame.setLocationRelativeTo(null);
+                gameFrame.setVisible(true);
+                firstTime++;
+            } else{
+                gamePanel.removeAll();
+                gamePanel.restartGame();
+                gameFrame.setVisible(true);
+            }
         } else if (e.getSource() == helpButton) {
             // Show the help dialog
-            JOptionPane.showMessageDialog(this, "Instructions:\nUse arrow keys to move your player\nPress space to shoot\nAvoid enemy bullets and try to hit the other player", "Help", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "How To Play:\nW- to go up \nA- to go left \nS- to go down \nD - to go right \nSpace Bar - to shoot" +
+                    "\n\nObjective: \nProtect your base for as long as possible by shooting any enemies that appear \n\nAdditional Notes: \nYour high score is calculated by the number of enemies" +
+                    " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
+                    "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do increases \nEvery time you clear a wave your base also recovers 10 health points",
+                    "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
-            // Show the leaderboard dialog
-            JOptionPane.showMessageDialog(this, "High Scores:\nPlayer 1: 100\nPlayer 2: 80\nPlayer 3: 60", "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
-        }
-        else if(e.getSource() == quitButton){
+            int[] scores = loadHighScores();
+            int[] newScores = new int[scores.length + 1];
+            for (int i = 0; i < scores.length; i++) {
+                newScores[i] = scores[i];
+            }
+            score = newScores[newScores.length - 1];
+            newScores[newScores.length - 1] = this.score; // update the last score with the current game score
+            Arrays.sort(newScores);
+            saveHighScores(newScores);
+            String message = "High Scores:";
+            int count = 0;
+            for (int i = newScores.length - 1; i >= 0 && count < NUM_HIGH_SCORES; i--) {
+                message += "\nPlayer " + (count + 1) + ": " + newScores[i];
+                count++;
+            }
+            JOptionPane.showMessageDialog(this, message, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
+        } else if(e.getSource() == quitButton){
             System.exit(0);
         }
     }
+
+
+    public int[] loadHighScores() {
+        try (Scanner scanner = new Scanner(new File(SCORES_FILE))) {
+            ArrayList<Integer> scores = new ArrayList<Integer>();
+            while (scanner.hasNextInt()) {
+                scores.add(scanner.nextInt());
+            }
+            int[] result = new int[scores.size()];
+            for (int i = 0; i < result.length; i++) {
+                result[i] = scores.get(i);
+            }
+            Arrays.sort(result);
+            return result;
+        } catch (IOException e) {
+            // Return an empty array if the file can't be read
+            return new int[0];
+        }
+    }
+
+    public void saveHighScores(int[] scores) {
+        try {
+            // Open the scores file for writing
+            java.io.FileWriter writer = new java.io.FileWriter(SCORES_FILE, false);
+
+            // Write each score to the file, up to the top ten high scores
+            for (int i = 0; i < Math.min(NUM_HIGH_SCORES, scores.length); i++) {
+                writer.write(scores[scores.length - 1 - i] + "\n");
+            }
+
+            // Close the file
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Failed to save high scores: " + e.getMessage());
+        }
+    }
+
+
+
 }

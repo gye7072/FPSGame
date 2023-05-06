@@ -1,6 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +28,16 @@ public class GameFrame extends JFrame implements ActionListener {
     private int score;
 
     public GameFrame() {
+        setLayout(new BorderLayout());
+        JLabel background=new JLabel(new ImageIcon("menubackground.png"));
+        add(background);
+        background.setLayout(new FlowLayout());
 
 
         setContentPane(mainPanel);
-        setTitle("Invaders");
+        setTitle("Defend the Base");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(true);
+        setResizable(false);
         this.pack();
         this.setVisible(true);
         // Center the frame on the screen
@@ -39,18 +46,16 @@ public class GameFrame extends JFrame implements ActionListener {
         helpButton.addActionListener(this);
         leaderBoardButton.addActionListener(this);
         quitButton.addActionListener(this);
+
     }
-
-
     public void actionPerformed(ActionEvent e) {
-
         // Handle button clicks
         if (e.getSource() == playButton) {
             // Start the game
             this.dispose();
             if(firstTime == 0) {
                 gamePanel = new GamePanel();
-                gameFrame = new JFrame("Invaders");
+                gameFrame = new JFrame("Defend the Base");
                 gameFrame.add(gamePanel);
                 gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 gameFrame.setResizable(false);
@@ -65,10 +70,13 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         } else if (e.getSource() == helpButton) {
             // Show the help dialog
-            JOptionPane.showMessageDialog(this, "How To Play:\nW- to go up \nA- to go left \nS- to go down \nD - to go right \nSpace Bar - to shoot" +
-                    "\n\nObjective: \nProtect your base for as long as possible by shooting any enemies that appear \n\nAdditional Notes: \nYour high score is calculated by the number of enemies" +
-                    " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
-                    "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do increases \nEvery time you clear a wave your base also recovers 10 health points",
+            JOptionPane.showMessageDialog(this, "Controls:\nW- to go up \nA- to go left \nS- to go down \nD - to go right \nSpace Bar - to shoot" +
+                            "\n\nObjective: \nProtect your base for as long as possible by shooting any enemies that appear and earn a high score\n\nLose Conditions:" +
+                            "\n-Number of lives hit 0\n-Base health points hits 0\n\nAdditional Notes: \nYou start with three lives and your base " +
+                            "starts at a hundred health points\nYour high score is calculated by the number of enemies" +
+                            " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
+                            "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do to your base increases " +
+                            "\nEvery time you clear a wave your base also recovers 10 health points",
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
             int[] scores = loadHighScores();

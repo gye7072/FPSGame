@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.event.KeyListener;
@@ -30,6 +32,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private String gameOverMessage;
     private boolean alreadyExecuted;
+    private BufferedImage image;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
 
@@ -37,7 +40,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     public GamePanel() {
         setPreferredSize(PANEL_SIZE);
-        setBackground(Color.white);
+        try {
+            image = ImageIO.read(getClass().getResource("background.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
         player1.setLives(3);
@@ -59,13 +67,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         if (!gameOver) {
             player1.tick();
-
             for (int i = 0; i < b1.size(); i++) {
                 b1.get(i).tick();
             }
-            enemyController.tick();
+            for (Enemy enemy : enemyController.getEnemyList()) {
+                enemy.tick();
+                for(int i = 0; i < enemy.getB2().size(); i++){
+                    enemy.getB2().get(i).tick();
+                }
+            }
         }
-        if (player1.getLives() == 0) {
+        if (player1.getLives() <= 0) {
+            player1.setLives(0);
+            enemyController.getEnemyList().clear();
             gameOver = true;
             gameOverMessage = "You lost all your lives!";
         } else if (baseHP <= 0) {
@@ -109,15 +123,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             Scanner scanner = new Scanner(file);
 
             int[] scores = new int[index + 1];
-            for (int i = 0; i < scores.length; i++) {
-                scores[i] = scanner.nextInt();
+            int count = 0;
+            while(scanner.hasNextInt()){
+                scores[count] = scanner.nextInt();
+                count++;
             }
             scanner.close();
 
             if (highScore > scores[index]) {
-                scores[index] = highScore;
                 FileWriter writer = new FileWriter(file);
-                for (int i = 0; i < scores.length; i++) {
+                if(count == 0){
+                    writer.write(highScore + "\n");
+                } else{
+                    scores[count-1] = highScore;
+                }
+                for (int i = 0; i < count; i++) {
                     writer.write(scores[i] + "\n");
                 }
                 writer.close();
@@ -129,11 +149,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
     }
 
-
-
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         // Draw the players
+        g.drawImage(image, 0, 0, null);
         player1.update();
         player1.draw(g);
         enemyController.draw(g);
@@ -221,7 +240,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         //player 1's bullet movements
         if (k.getKeyCode() == KeyEvent.VK_SPACE) {
-            Bullet bullet1 = new Bullet(Color.BLACK, player1.x + player1.width / 2, player1.y + player1.height / 2, 5, 5, 0, 0);
+            Bullet bullet1 = new Bullet(Color.WHITE, player1.x + player1.width / 2, player1.y + player1.height / 2, 5, 5, 0, 0);
             b1.add(bullet1);
             bullet1.setDx(10);
         }
@@ -272,16 +291,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 baseHP += 10;
             }
             if (System.currentTimeMillis() - waveOverTimer < 2000) {
+                g.setColor(Color.WHITE);
                 g.setFont(new Font("Century Gothic", Font.PLAIN, 18));
                 String s = "-  W A V E  " + (waveNumber - 1) + "  C L E A R E D  -";
                 int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
-                g.setColor(new Color(5, 62, 234));
                 g.drawString(s, PANEL_WIDTH / 2 - length / 2, PANEL_HEIGHT / 2);
             } else {
+                g.setColor(Color.WHITE);
                 g.setFont(new Font("Century Gothic", Font.PLAIN, 18));
                 String s = "-  E N T E R   W A V E  " + waveNumber + "  -";
                 int length = (int) g.getFontMetrics().getStringBounds(s, g).getWidth();
-                g.setColor(new Color(5, 62, 234));
                 g.drawString(s, PANEL_WIDTH / 2 - length / 2, PANEL_HEIGHT / 2);
             }
         }
@@ -290,7 +309,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     private void drawStats(Graphics g) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         g.setFont(new Font("Futura", Font.BOLD, 20));
         String livesStr = "Lives: " + player1.getLives();
         g.drawString(livesStr, 15, 40);
@@ -304,13 +323,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     private void drawGameOver(Graphics g) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         int strWidth = g.getFontMetrics().stringWidth(gameOverMessage);
         g.setFont(new Font("Impact", Font.BOLD, 100));
         g.drawString("GAME OVER!", PANEL_WIDTH / 2 - strWidth, PANEL_HEIGHT / 2 - 50);
         g.setFont(new Font("Impact", Font.BOLD, 25));
-        g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 100, PANEL_HEIGHT / 2);
-        g.drawString("High Score: " + highScore, PANEL_WIDTH / 2 - strWidth + 100, PANEL_HEIGHT/2 + 25);
+        g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 100, PANEL_HEIGHT / 2 - 10);
+        g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 140, PANEL_HEIGHT/2 + 25);
 
     }
 

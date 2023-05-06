@@ -27,8 +27,8 @@ public class Enemy extends Rectangle{
 
         this.x += dx;
         this.y += dy;
-        int random = (int) (Math.random() * 10);
-        if(random >= 5){
+        int random = (int) (Math.random() * 100);
+        if(random == 0){
             shoot = true;
         }
     }
@@ -36,9 +36,8 @@ public class Enemy extends Rectangle{
         g.setColor(color);
         g.fillRect(this.x, this.y, this.width, this.height);
         if(shoot){
-            Bullet bullet = new Bullet(Color.BLACK, this.x + this.width / 2, this.y + this.height / 2, 5, 5, 0, 0);
+            Bullet bullet = new Bullet(Color.WHITE, this.x + this.width / 2, this.y + this.height / 2, 5, 5, -10, 0);
             b2.add(bullet);
-            bullet.setDx(-5);
             shoot = false;
         }
     }

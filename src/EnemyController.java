@@ -49,7 +49,6 @@ public class EnemyController {
                 int y = (int) (Math.random() * (GamePanel.PANEL_HEIGHT - 50));
                 Enemy enemy = new Enemy(Color.GREEN, GamePanel.PANEL_WIDTH - 50, y, 25, 25, waveNumber, 0);
                 enemy.addDx(enemySpeed);
-                System.out.println(enemy.getDx());
                 e.add(enemy);
             }
         }

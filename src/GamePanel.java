@@ -90,13 +90,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (gameOver) {
             enemyController.setGameOver(true);
             b1.clear();
-            player1.x = 50;
-            player1.y = PANEL_HEIGHT / 2;
             if (!alreadyExecuted) {
                 highScore = killCount + waveNumber;
                 updateScores(9);
-                setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
                 retryButton = new JButton("Retry");
+                retryButton.setBackground(Color.WHITE);
                 retryButton.setBounds(PANEL_WIDTH / 2 - 100, PANEL_HEIGHT / 2 + 50, 200, 50);
                 add(retryButton);
                 mainMenuButton = new JButton("Main Menu");
@@ -106,6 +104,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 mainMenuButton.addActionListener(this);
                 alreadyExecuted = true;
             }
+            retryButton.setBounds(PANEL_WIDTH / 2 - 100, PANEL_HEIGHT / 2 + 50, 200, 50);
+            mainMenuButton.setBounds(PANEL_WIDTH / 2 - 100, PANEL_HEIGHT / 2 + 120, 200, 50);
             if (e.getSource() == retryButton) {
                 // Start the game
                 removeAll();
@@ -153,8 +153,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
         // Draw the players
         g.drawImage(image, 0, 0, null);
-        player1.update();
-        player1.draw(g);
+        if(!gameOver) {
+            player1.update();
+            player1.draw(g);
+        }
         enemyController.draw(g);
         for (Bullet bullet : b1) {
             bullet.draw(g);
@@ -223,10 +225,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
-
-
-
-
 
 
 
@@ -326,7 +324,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.WHITE);
         int strWidth = g.getFontMetrics().stringWidth(gameOverMessage);
         g.setFont(new Font("Impact", Font.BOLD, 100));
-        g.drawString("GAME OVER!", PANEL_WIDTH / 2 - strWidth, PANEL_HEIGHT / 2 - 50);
+        g.drawString("GAME OVER", PANEL_WIDTH / 2 - strWidth, PANEL_HEIGHT / 2 - 50);
         g.setFont(new Font("Impact", Font.BOLD, 25));
         g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 100, PANEL_HEIGHT / 2 - 10);
         g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 140, PANEL_HEIGHT/2 + 25);

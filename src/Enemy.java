@@ -36,7 +36,8 @@ public class Enemy extends Rectangle{
         g.setColor(color);
         g.fillRect(this.x, this.y, this.width, this.height);
         if(shoot){
-            Bullet bullet = new Bullet(Color.WHITE, this.x + this.width / 2, this.y + this.height / 2, 5, 5, -10, 0);
+            Bullet bullet = new Bullet(Color.WHITE, this.x + this.width / 2, this.y + this.height / 2, 5, 5, (this.dx * 2), 0);
+            System.out.println(dx);
             b2.add(bullet);
             shoot = false;
         }
@@ -57,6 +58,7 @@ public class Enemy extends Rectangle{
     public int getDx(){
         return dx;
     }
+
     public void setDy(int dy){
         this.dy = dy;
     }

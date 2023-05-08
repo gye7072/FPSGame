@@ -6,7 +6,7 @@ public class EnemyController {
 
     private int enemyCount;
     private int enemyKilled;
-    private static int waveNumber;
+    private int waveNumber;
     private boolean waveOver;
     private boolean gameOver;
     private long lastSpawnTime;
@@ -31,6 +31,16 @@ public class EnemyController {
     }
 
     public void spawnEnemies() {
+        if(spawnEnabled) {
+            if (!gameOver && (System.currentTimeMillis() - lastSpawnTime >= spawnDelay) && (enemyKilled < enemyCount)) {
+                lastSpawnTime = System.currentTimeMillis();
+                int y = (int) (Math.random() * (GamePanel.PANEL_HEIGHT - 50));
+                Enemy enemy = new Enemy(Color.GREEN, GamePanel.PANEL_WIDTH - 50, y, 25, 25, waveNumber, 0);
+                enemy.addDx(enemySpeed);
+                e.add(enemy);
+            }
+        }
+
         if (!gameOver && (enemyKilled == enemyCount)) {
             waveNumber++;
             enemyCount++;
@@ -42,15 +52,6 @@ public class EnemyController {
             }
             spawnDelay -= 100;
             e.clear();
-        }
-        if(spawnEnabled) {
-            if (!gameOver && (System.currentTimeMillis() - lastSpawnTime >= spawnDelay) && (enemyKilled < enemyCount)) {
-                lastSpawnTime = System.currentTimeMillis();
-                int y = (int) (Math.random() * (GamePanel.PANEL_HEIGHT - 50));
-                Enemy enemy = new Enemy(Color.GREEN, GamePanel.PANEL_WIDTH - 50, y, 25, 25, waveNumber, 0);
-                enemy.addDx(enemySpeed);
-                e.add(enemy);
-            }
         }
     }
 

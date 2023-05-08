@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-/**
- * The GameFrame class represents the main frame for the 1v1 shooter game.
- */
 public class GameFrame extends JFrame implements ActionListener {
 
     private JPanel mainPanel;
@@ -28,12 +25,6 @@ public class GameFrame extends JFrame implements ActionListener {
     private int score;
 
     public GameFrame() {
-        setLayout(new BorderLayout());
-        JLabel background=new JLabel(new ImageIcon("menubackground.png"));
-        add(background);
-        background.setLayout(new FlowLayout());
-
-
         setContentPane(mainPanel);
         setTitle("Defend the Base");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

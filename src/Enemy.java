@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ public class Enemy extends Rectangle{
         this.dy = dy;
         setDx(-5);
         shoot = true;
+        try {
+            image = ImageIO.read(getClass().getResource("enemy.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -27,20 +34,19 @@ public class Enemy extends Rectangle{
 
         this.x += dx;
         this.y += dy;
-        int random = (int) (Math.random() * 100);
+        int random = (int) (Math.random() * 1000);
         if(random == 0){
             shoot = true;
         }
     }
     public void draw(Graphics g) {
-        g.setColor(color);
-        g.fillRect(this.x, this.y, this.width, this.height);
+        g.drawImage(image, this.x, this.y, this.width, this.height,null);
         if(shoot){
-            Bullet bullet = new Bullet(Color.WHITE, this.x + this.width / 2, this.y + this.height / 2, 5, 5, (this.dx * 2), 0);
-            System.out.println(dx);
+            Bullet bullet = new Bullet(Color.GREEN, this.x + this.width / 2, this.y + this.height / 2, 5, 5, (this.dx * 2), 0);
             b2.add(bullet);
             shoot = false;
         }
+
     }
 
     public ArrayList<Bullet> getB2(){

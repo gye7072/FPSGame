@@ -12,7 +12,7 @@ import java.awt.event.KeyListener;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
-    public static final int PANEL_WIDTH = 800;
+    public static final int PANEL_WIDTH = 1000;
     public static final int PANEL_HEIGHT = 600;
     static final Dimension PANEL_SIZE = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
     private Player player1;
@@ -32,6 +32,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private String gameOverMessage;
     private boolean alreadyExecuted;
+    private Hearts hearts;
     private BufferedImage image;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
@@ -48,6 +49,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
+        hearts = new Hearts(1);
         player1.setLives(3);
         killCount = 0;
         highScore = 0;
@@ -180,6 +182,20 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     public void checkCollision() {
+
+        // Check if any enemies have gone off-screen
+        ArrayList<Enemy> enemies = enemyController.getEnemyList();
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
+            if (enemy != null && enemy.x + enemy.width < 0) {
+                // Enemy has gone off-screen, remove it and decrement base HP
+                enemies.remove(i);
+                enemyController.addEnemyKilled();
+                i--;
+                baseHP = baseHP - waveNumber;
+            }
+        }
+
         // Check for collisions between player bullets and enemies
         for (int i = 0; i < b1.size(); i++) {
             Bullet bullet = b1.get(i);
@@ -197,30 +213,18 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
-
-        // Check if any enemies have gone off-screen
-        ArrayList<Enemy> enemies = enemyController.getEnemyList();
-        for (int i = 0; i < enemies.size(); i++) {
-            Enemy enemy = enemies.get(i);
-            if (enemy != null && enemy.x + enemy.width < 0) {
-                // Enemy has gone off-screen, remove it and decrement base HP
-                enemies.remove(i);
-                enemyController.addEnemyKilled();
-                i--;
-                baseHP = baseHP - waveNumber;
-            }
-        }
         if (enemyController.getEnemyKilled() == enemyController.getEnemyCount()) {
             waveNumber++;
             waveOver = true;
         }
 
+        //check collision between enemy bullets and player
         for(Enemy e : enemyController.getEnemyList()){
             for(int i = 0; i < e.getB2().size(); i++){
                 if(e.getB2().get(i).x >= player1.x && e.getB2().get(i).x <= player1.x + player1.width &&
                         e.getB2().get(i).y >= player1.y && e.getB2().get(i).y <= player1.y + player1.height){
                     player1.lostLife();
-                    e.getB2().remove(i);
+                    e.getB2().remove(0);
                     i--;
                 }
             }
@@ -337,7 +341,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         // Create a new instance of the main menu game frame
         GameFrame mainMenuFrame = new GameFrame();
-        mainMenuFrame.setSize(800, 600);
+        mainMenuFrame.setSize(GameFrame.FRAME_WIDTH, GameFrame.FRAME_HEIGHT);
         mainMenuFrame.setLocationRelativeTo(null);
 
         // Show the main menu game frame
@@ -353,6 +357,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         waveNumber = 1;
         baseHP = 100;
         enemyController.getEnemyList().clear();
+
         b1.clear();
         gameOver = false;
         gameOverMessage = "";

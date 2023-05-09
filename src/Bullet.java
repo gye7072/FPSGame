@@ -6,8 +6,6 @@ import java.util.ArrayList;
  */
 public class Bullet extends Rectangle{
 
-    private static final int SPEED = 10;
-
     private Color color;
     public int x;
     public int y;

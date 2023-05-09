@@ -12,6 +12,10 @@ import java.util.Scanner;
 
 public class GameFrame extends JFrame implements ActionListener {
 
+
+    public static final int FRAME_WIDTH = 800;
+
+    public static final int FRAME_HEIGHT = 600;
     private JPanel mainPanel;
     private JButton playButton;
     private JButton helpButton;

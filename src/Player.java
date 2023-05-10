@@ -49,6 +49,10 @@ public class Player extends Rectangle{
         lives--;
     }
 
+    public void addLife(int i){
+        lives += i;
+    }
+
     public void setLives(int i){
         lives = i;
     }

@@ -8,9 +8,13 @@ public class Hearts {
     private boolean dropped;
     private int x;
     private int y;
+    private int lifePoints;
 
 
-    public Hearts(int lifePoints) {
+    public Hearts(int lifePoints, int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.lifePoints = lifePoints;
         try {
             image = ImageIO.read(getClass().getResource("heart.png"));
         } catch (Exception e) {
@@ -18,18 +22,19 @@ public class Hearts {
         }
     }
 
-    public void spawnHearts(int x, int y) {
-        int random = (int) ((Math.random() * 10) + 1);
-        if(random == 1){
-            this.x = x;
-            this.y = y;
-            dropped = true;
-        }
+    public int getX(){
+        return x;
     }
 
-//    public void draw(Graphics g){
-//        if(dropped) {
-//            g.drawImage(g.drawImage(image,x,y,10,10,null);
-//        }
-//    }
+    public int getY(){
+        return y;
+    }
+
+    public int getLifePoints(){
+        return lifePoints;
+    }
+
+    public void draw(Graphics g){
+        g.drawImage(image,x,y,25,25,null);
+    }
 }

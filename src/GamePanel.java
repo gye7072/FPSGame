@@ -24,7 +24,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private static int waveNumber;
     private JButton retryButton;
     private JButton mainMenuButton;
-
+    private long timer = -1;
     private int killCount;
     private int highScore;
 
@@ -32,8 +32,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private String gameOverMessage;
     private boolean alreadyExecuted;
-    private Hearts hearts;
     private BufferedImage image;
+    private boolean dropped;
+    private Hearts hearts;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
 
@@ -49,11 +50,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
-        hearts = new Hearts(1);
         player1.setLives(3);
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
+        dropped = false;
         waveNumber = 1;
         baseHP = 100;
         enemyController.getEnemyList().clear();
@@ -174,14 +175,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (!gameOver) {
             drawWaveOver(g);
         }
-        checkCollision();
+        checkCollision(g);
         if (gameOver) {
             drawGameOver(g);
         }
     }
 
 
-    public void checkCollision() {
+    public void checkCollision(Graphics g) {
 
         // Check if any enemies have gone off-screen
         ArrayList<Enemy> enemies = enemyController.getEnemyList();
@@ -196,16 +197,32 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
 
+        //check if player bullets have gone off-screen
+        //removes player 1 bullets if its off-screen
+        for (int i = 0; i < b1.size(); i++) {
+            if (b1.get(i).x >= PANEL_WIDTH || b1.get(i).x <= 0 ||
+                    b1.get(i).y >= PANEL_HEIGHT || b1.get(i).y <= 0) {
+                b1.remove(i);
+                i--;
+            }
+        }
+
+
         // Check for collisions between player bullets and enemies
         for (int i = 0; i < b1.size(); i++) {
             Bullet bullet = b1.get(i);
-            for (int j = 0; j < enemyController.getEnemyList().size(); j++) {
-                Enemy enemy = enemyController.getEnemyList().get(j);
+            for (int j = 0; j < enemies.size(); j++) {
+                Enemy enemy = enemies.get(j);
                 if (enemy != null && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
                         bullet.y >= enemy.y && bullet.y <= enemy.y + enemy.height) {
                     // Collision detected, remove bullet and enemy
                     if (!b1.isEmpty()) {
                         b1.remove(0);
+                    }
+                    int random = (int) ((Math.random() * 10) + 1);
+                    if(random == 1){
+                        hearts = new Hearts(1, enemy.x, enemy.y);
+                        dropped = true;
                     }
                     enemyController.removeEnemy(j);
                     enemyController.addEnemyKilled();
@@ -219,7 +236,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
         //check collision between enemy bullets and player
-        for(Enemy e : enemyController.getEnemyList()){
+        for(Enemy e : enemies){
             for(int i = 0; i < e.getB2().size(); i++){
                 if(e.getB2().get(i).x >= player1.x && e.getB2().get(i).x <= player1.x + player1.width &&
                         e.getB2().get(i).y >= player1.y && e.getB2().get(i).y <= player1.y + player1.height){
@@ -231,13 +248,34 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
 
+        //heart despawns when time is greater than 2 seconds and it despawns when player picks up the heart
+
+        if(dropped){
+            if(timer == -1){
+                timer = System.currentTimeMillis();
+            }
+            if(System.currentTimeMillis() - timer < 2000){
+                hearts.draw(g);
+                if(hearts != null && hearts.getX() >= player1.x && hearts.getX() <= player1.x + player1.width &&
+                        hearts.getY() >= player1.y && hearts.getY() <= player1.y + player1.height) {
+                    player1.addLife(hearts.getLifePoints());
+                    hearts = null;
+                    dropped = false;
+
+                }
+            }
+            if(System.currentTimeMillis() - timer > 2000){
+                timer = -1;
+                hearts = null;
+                dropped = false;
+            }
+        }
 
     }
 
     public void keyTyped(KeyEvent e) {
 
     }
-
     public void keyPressed(KeyEvent k) {
 
         //player 1's bullet movements
@@ -286,7 +324,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 waveOverTimer = System.currentTimeMillis();
                 enemyController.setSpawnEnabled(false); // stop enemy spawning
             } else if (System.currentTimeMillis() - waveOverTimer > 5000) {
-                // 4 seconds have passed, resume enemy spawning
+                // 5 seconds have passed, resume enemy spawning
                 waveOver = false;
                 waveOverTimer = -1;
                 enemyController.setSpawnEnabled(true);

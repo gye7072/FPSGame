@@ -13,6 +13,7 @@ public class Enemy extends Rectangle{
     private Color color;
     private boolean shoot;
 
+    long timer = -1;
     private BufferedImage image;
     public Enemy(Color color, int x, int y, int width, int height, int dx, int dy) {
         setBounds(x,y,width,height);
@@ -34,9 +35,18 @@ public class Enemy extends Rectangle{
 
         this.x += dx;
         this.y += dy;
-        int random = (int) (Math.random() * 1000);
-        if(random == 0){
-            shoot = true;
+        if(timer == -1){
+            timer = System.currentTimeMillis();
+        }
+        if(System.currentTimeMillis() < 1000){
+            int random = (int) ((Math.random() * 10) + 1);
+            if(random == 1) {
+                shoot = true;
+            }
+        }
+        if(System.currentTimeMillis() > 1000){
+            timer = -1;
+            shoot = false;
         }
     }
     public void draw(Graphics g) {

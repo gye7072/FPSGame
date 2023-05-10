@@ -24,7 +24,7 @@ public class Player extends Rectangle{
         }
     }
 
-    public void tick(){
+    public void tick() {
         this.x += dx;
         this.y += dy;
     }

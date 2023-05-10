@@ -18,6 +18,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private Player player1;
 
     private EnemyController enemyController;
+    private HeartsController heartsController;
     private boolean waveOver;
     private int baseHP;
     private long waveOverTimer = -1;
@@ -50,6 +51,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
+        heartsController = new HeartsController(enemyController.getEnemyList(), b1, player1);
         player1.setLives(3);
         killCount = 0;
         highScore = 0;
@@ -161,6 +163,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player1.draw(g);
         }
         enemyController.draw(g);
+        heartsController.draw(g);
         for (Bullet bullet : b1) {
             bullet.draw(g);
         }
@@ -219,11 +222,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     if (!b1.isEmpty()) {
                         b1.remove(0);
                     }
-                    int random = (int) ((Math.random() * 10) + 1);
-                    if(random == 1){
-                        hearts = new Hearts(1, enemy.x, enemy.y);
-                        dropped = true;
-                    }
+                    heartsController.spawnHearts(g, enemy.x, enemy.y);
                     enemyController.removeEnemy(j);
                     enemyController.addEnemyKilled();
                     killCount++;
@@ -244,30 +243,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     e.getB2().remove(0);
                     i--;
                 }
-            }
-        }
-
-
-        //heart despawns when time is greater than 2 seconds and it despawns when player picks up the heart
-
-        if(dropped){
-            if(timer == -1){
-                timer = System.currentTimeMillis();
-            }
-            if(System.currentTimeMillis() - timer < 2000){
-                hearts.draw(g);
-                if(hearts != null && hearts.getX() >= player1.x && hearts.getX() <= player1.x + player1.width &&
-                        hearts.getY() >= player1.y && hearts.getY() <= player1.y + player1.height) {
-                    player1.addLife(hearts.getLifePoints());
-                    hearts = null;
-                    dropped = false;
-
-                }
-            }
-            if(System.currentTimeMillis() - timer > 2000){
-                timer = -1;
-                hearts = null;
-                dropped = false;
             }
         }
 
@@ -388,6 +363,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
     public void restartGame() {
+        player1.x = 50;
+        player1.y = PANEL_WIDTH/2;
         player1.setLives(3);
         highScore = 0;
         killCount = 0;

@@ -36,6 +36,22 @@ public class GameFrame extends JFrame implements ActionListener {
         this.pack();
         this.setVisible(true);
         // Center the frame on the screen
+
+//        playButton = new JButton("Play");
+////        playButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 50, 200, 50);
+////        add(playButton);
+////        helpButton = new JButton("Help");
+////        helpButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 100, 200, 50);
+////        add(helpButton);
+////
+////        leaderBoardButton = new JButton("LeaderBoard");
+////        leaderBoardButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 150, 200, 50);
+////        add(leaderBoardButton);
+////
+////        quitButton = new JButton("Quit");
+////        quitButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 200, 200, 50);
+////        add(helpButton);
+
         setLocationRelativeTo(null);
         playButton.addActionListener(this);
         helpButton.addActionListener(this);

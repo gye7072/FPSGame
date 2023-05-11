@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,22 +36,23 @@ public class GameFrame extends JFrame implements ActionListener {
         setResizable(false);
         this.pack();
         this.setVisible(true);
-        // Center the frame on the screen
+        createScoresFile();
+//      Center the frame on the screen
 
 //        playButton = new JButton("Play");
-////        playButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 50, 200, 50);
-////        add(playButton);
-////        helpButton = new JButton("Help");
-////        helpButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 100, 200, 50);
-////        add(helpButton);
-////
-////        leaderBoardButton = new JButton("LeaderBoard");
-////        leaderBoardButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 150, 200, 50);
-////        add(leaderBoardButton);
-////
-////        quitButton = new JButton("Quit");
-////        quitButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 200, 200, 50);
-////        add(helpButton);
+//        playButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 50, 200, 50);
+//        add(playButton);
+//        helpButton = new JButton("Help");
+//        helpButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 100, 200, 50);
+//        add(helpButton);
+//
+//        leaderBoardButton = new JButton("LeaderBoard");
+//        leaderBoardButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 150, 200, 50);
+//        add(leaderBoardButton);
+//
+//        quitButton = new JButton("Quit");
+//        quitButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 200, 200, 50);
+//        add(helpButton);
 
         setLocationRelativeTo(null);
         playButton.addActionListener(this);
@@ -87,7 +89,8 @@ public class GameFrame extends JFrame implements ActionListener {
                             "starts at a hundred health points\nYour high score is calculated by the number of enemies" +
                             " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
                             "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do to your base increases " +
-                            "\nEvery time you clear a wave your base also recovers 10 health points",
+                            "\nEvery time you clear a wave your base recovers 10 health points\nEach enemy has a chance to drop a heart that upon picking up can increase the amount" +
+                            "of lives you have by one",
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
             int[] scores = loadHighScores();
@@ -108,6 +111,17 @@ public class GameFrame extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, message, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
         } else if(e.getSource() == quitButton){
             System.exit(0);
+        }
+    }
+
+    private void createScoresFile() {
+        File scoresFile = new File(SCORES_FILE);
+        if (!scoresFile.exists()) {
+            try {
+                scoresFile.createNewFile();
+            } catch (IOException e) {
+                System.out.println("Failed to create scores file: " + e.getMessage());
+            }
         }
     }
 

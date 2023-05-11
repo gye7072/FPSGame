@@ -220,7 +220,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         bullet.y >= enemy.y && bullet.y <= enemy.y + enemy.height) {
                     // Collision detected, remove bullet and enemy
                     if (!b1.isEmpty()) {
-                        b1.remove(0);
+                        b1.remove(bullet);
                     }
                     heartsController.spawnHearts(g, enemy.x, enemy.y);
                     enemyController.removeEnemy(j);

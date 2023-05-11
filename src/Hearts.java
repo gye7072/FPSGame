@@ -9,7 +9,7 @@ public class Hearts {
     private int x;
     private int y;
     private int lifePoints;
-
+    private long timer = -1;
 
     public Hearts(int lifePoints, int x, int y) {
         this.x = x;
@@ -20,6 +20,13 @@ public class Hearts {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(timer == -1){
+            timer = System.currentTimeMillis();
+        }
+    }
+
+    public long getSpawnTime(){
+        return (System.currentTimeMillis() - timer);
     }
 
     public int getX(){

@@ -38,13 +38,13 @@ public class Enemy extends Rectangle{
         if(timer == -1){
             timer = System.currentTimeMillis();
         }
-        if(System.currentTimeMillis() < 1000){
+        if(System.currentTimeMillis() - timer == 1000){
             int random = (int) ((Math.random() * 10) + 1);
             if(random == 1) {
                 shoot = true;
             }
         }
-        if(System.currentTimeMillis() > 1000){
+        if(System.currentTimeMillis() - timer > 1000){
             timer = -1;
             shoot = false;
         }

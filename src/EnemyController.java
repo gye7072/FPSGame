@@ -53,10 +53,11 @@ public class EnemyController {
             if(waveNumber == 10){
                 enemySpeed -= 1;
             }
-            if(spawnDelay != 1000) {
+            if(spawnDelay != 500) {
                 spawnDelay -= 100;
             }
-            System.out.println(spawnDelay);
+            System.out.println("Enemy Speed: " + enemySpeed);
+            System.out.println("Spawn Delay: " + spawnDelay);
             e.clear();
         }
     }

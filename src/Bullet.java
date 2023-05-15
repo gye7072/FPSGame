@@ -1,9 +1,6 @@
 import java.awt.*;
 import java.awt.Graphics;
 import java.util.ArrayList;
-/**
- * The Bullet class represents a bullet fired by a player in the 1v1 shooter game.
- */
 public class Bullet extends Rectangle{
 
     private Color color;
@@ -13,7 +10,6 @@ public class Bullet extends Rectangle{
     private int dy;
     private int width;
     private int height;
-    private int direction;
 
     public Bullet(Color color, int x, int y, int width, int height, int dx, int dy) {
         this.color = color;
@@ -23,7 +19,6 @@ public class Bullet extends Rectangle{
         this.height = height;
         this.dx =dx;
         this.dy = dy;
-        this.direction = direction;
     }
 
     public void draw(Graphics g) {

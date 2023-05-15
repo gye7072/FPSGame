@@ -33,8 +33,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private String gameOverMessage;
     private boolean alreadyExecuted;
+    private Hit hit;
     private BufferedImage image;
-    private boolean dropped;
     private Hearts hearts;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     public GamePanel() {
         setPreferredSize(PANEL_SIZE);
+        setBackground(Color.BLACK);
         try {
             image = ImageIO.read(getClass().getResource("background.png"));
         } catch (Exception e) {
@@ -52,11 +53,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
         heartsController = new HeartsController(enemyController.getEnemyList(), b1, player1);
+        hit = new Hit(player1.x, player1.y, 100,100);
         player1.setLives(3);
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
-        dropped = false;
         waveNumber = 1;
         baseHP = 100;
         enemyController.getEnemyList().clear();
@@ -93,13 +94,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             gameOverMessage = "Your base was destroyed!";
         }
         if (gameOver) {
+            heartsController.setGameOver(true);
             enemyController.setGameOver(true);
             b1.clear();
             if (!alreadyExecuted) {
                 highScore = killCount + waveNumber;
                 updateScores(9);
                 retryButton = new JButton("Retry");
-                retryButton.setBackground(Color.WHITE);
+//                retryButton.setBackground(Color.WHITE);
                 retryButton.setBounds(PANEL_WIDTH / 2 - 100, PANEL_HEIGHT / 2 + 50, 200, 50);
                 add(retryButton);
                 mainMenuButton = new JButton("Main Menu");
@@ -156,9 +158,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Draw the players
-        g.drawImage(image, 0, 0, null);
         if(!gameOver) {
+            g.drawImage(image, 0, 0, null);
             player1.update();
             player1.draw(g);
         }
@@ -181,6 +182,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         checkCollision(g);
         if (gameOver) {
             drawGameOver(g);
+        }
+        if(hit.getHit()){
+            hit.draw(g);
         }
     }
 
@@ -219,6 +223,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 if (enemy != null && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
                         bullet.y >= enemy.y && bullet.y <= enemy.y + enemy.height) {
                     // Collision detected, remove bullet and enemy
+                    hit = new Hit(enemy.x, enemy.y, 50,50);
+                    hit.setHit(true);
                     if (!b1.isEmpty()) {
                         b1.remove(bullet);
                     }
@@ -242,6 +248,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     player1.lostLife();
                     e.getB2().remove(0);
                     i--;
+                    hit = new Hit(player1.x, player1.y, 50,50);
+                    hit.setHit(true);
                 }
             }
         }
@@ -341,7 +349,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.WHITE);
         int strWidth = g.getFontMetrics().stringWidth(gameOverMessage);
         g.setFont(new Font("Impact", Font.BOLD, 100));
-        g.drawString("GAME OVER", PANEL_WIDTH / 2 - strWidth, PANEL_HEIGHT / 2 - 50);
+        g.drawString("G A M E  O V E R", PANEL_WIDTH / 2 - strWidth-50, PANEL_HEIGHT / 2 - 50);
         g.setFont(new Font("Impact", Font.BOLD, 25));
         g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 100, PANEL_HEIGHT / 2 - 10);
         g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 140, PANEL_HEIGHT/2 + 25);
@@ -372,7 +380,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         waveNumber = 1;
         baseHP = 100;
         enemyController.getEnemyList().clear();
-
+        heartsController.setGameOver(false);
         b1.clear();
         gameOver = false;
         gameOverMessage = "";

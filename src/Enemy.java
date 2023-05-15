@@ -31,24 +31,25 @@ public class Enemy extends Rectangle{
     }
 
 
-    public void tick(){
-
+    public void tick() {
         this.x += dx;
         this.y += dy;
-        if(timer == -1){
+
+        if (timer == -1) {
             timer = System.currentTimeMillis();
         }
-        if(System.currentTimeMillis() - timer == 1000){
-            int random = (int) ((Math.random() * 10) + 1);
-            if(random == 1) {
-                shoot = true;
-            }
+
+        if (System.currentTimeMillis() - timer >= 1000) {
+            shoot = true;
+            timer = System.currentTimeMillis();
         }
-        if(System.currentTimeMillis() - timer > 1000){
+
+        if (System.currentTimeMillis() - timer > 1000) {
             timer = -1;
             shoot = false;
         }
     }
+
     public void draw(Graphics g) {
         g.drawImage(image, this.x, this.y, this.width, this.height,null);
         if(shoot){

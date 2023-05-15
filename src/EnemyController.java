@@ -56,8 +56,6 @@ public class EnemyController {
             if(spawnDelay != 500) {
                 spawnDelay -= 100;
             }
-            System.out.println("Enemy Speed: " + enemySpeed);
-            System.out.println("Spawn Delay: " + spawnDelay);
             e.clear();
         }
     }

@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class GameFrame extends JFrame implements ActionListener {
 
 
-    public static final int FRAME_WIDTH = 800;
+    public static final int FRAME_WIDTH = 600;
 
     public static final int FRAME_HEIGHT = 600;
     private JPanel mainPanel;
@@ -27,6 +27,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private static int firstTime;
     private static GamePanel gamePanel;
     private static JFrame gameFrame;
+    private Sound sound;
     private int score;
 
     public GameFrame() {
@@ -59,11 +60,15 @@ public class GameFrame extends JFrame implements ActionListener {
         helpButton.addActionListener(this);
         leaderBoardButton.addActionListener(this);
         quitButton.addActionListener(this);
+        sound = new Sound();
+        sound.setFile(0);
+        sound.play();
 
     }
     public void actionPerformed(ActionEvent e) {
         // Handle button clicks
         if (e.getSource() == playButton) {
+            sound.stop();
             // Start the game
             this.dispose();
             if(firstTime == 0) {
@@ -89,8 +94,8 @@ public class GameFrame extends JFrame implements ActionListener {
                             "starts at a hundred health points\nYour high score is calculated by the number of enemies" +
                             " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
                             "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do to your base increases " +
-                            "\nEvery time you clear a wave your base recovers 10 health points\nEach enemy has a chance to drop a heart that upon picking up can increase the amount" +
-                            "of lives you have by one",
+                            "\nEvery time you clear a wave your base recovers 10 health points\nEach enemy has a chance to drop a heart which can increase the amount" +
+                            " of lives you have by one",
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
             int[] scores = loadHighScores();

@@ -19,7 +19,8 @@ public class HeartsController {
 
 
     public void spawnHearts(Graphics g, int x, int y) {
-        int random = (int) ((Math.random() * 10) + 1);
+//        int random = (int) ((Math.random() * 10) + 1);
+        int random = 1;
         if (random == 1) {
             hearts = new Hearts(1,x,y);
             h1.add(hearts);
@@ -32,7 +33,7 @@ public class HeartsController {
             if (dropped) {
                 for (int i = 0; i < h1.size(); i++) {
                     hearts = h1.get(i);
-                    if (hearts.getSpawnTime() + 300 < 3000) {
+                    if (hearts.getSpawnTime() < 3000 && hearts.getSpawnTime() > 100) {
                         hearts.draw(g);
                         if (hearts != null && hearts.getX() >= player.x && hearts.getX() <= player.x + player.width &&
                                 hearts.getY() >= player.y && hearts.getY() <= player.y + player.height) {

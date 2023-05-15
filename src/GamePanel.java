@@ -12,8 +12,8 @@ import java.awt.event.KeyListener;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
-    public static final int PANEL_WIDTH = 1000;
-    public static final int PANEL_HEIGHT = 600;
+    public static int PANEL_WIDTH = 1000;
+    public static int PANEL_HEIGHT = 600;
     static final Dimension PANEL_SIZE = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
     private Player player1;
 
@@ -34,8 +34,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private String gameOverMessage;
     private boolean alreadyExecuted;
     private Hit hit;
+
+    private Sound sound;
     private BufferedImage image;
-    private Hearts hearts;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
 
@@ -368,6 +369,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         // Show the main menu game frame
         mainMenuFrame.setVisible(true);
     }
+
 
 
     public void restartGame() {

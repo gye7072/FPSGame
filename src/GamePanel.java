@@ -35,7 +35,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean alreadyExecuted;
     private Hit hit;
 
-    private Sound sound;
     private BufferedImage image;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
@@ -69,6 +68,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         setFocusable(true);
         t.start();
+
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -99,6 +99,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             enemyController.setGameOver(true);
             b1.clear();
             if (!alreadyExecuted) {
+                Sound sound = new Sound();
+                sound.setFile(5);
+                sound.play();
                 highScore = killCount + waveNumber;
                 updateScores(9);
                 retryButton = new JButton("Retry");
@@ -132,33 +135,32 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             int[] scores = new int[index + 1];
             int count = 0;
-            while(scanner.hasNextInt()){
+            while (scanner.hasNextInt() && count < scores.length) {
                 scores[count] = scanner.nextInt();
                 count++;
             }
             scanner.close();
 
             if (highScore > scores[index]) {
+                scores[count - 1] = highScore;
+                Arrays.sort(scores);
+
                 FileWriter writer = new FileWriter(file);
-                if(count == 0){
-                    writer.write(highScore + "\n");
-                } else{
-                    scores[count-1] = highScore;
-                }
-                for (int i = 0; i < count; i++) {
+                for (int i = scores.length - 1; i >= 0; i--) {
                     writer.write(scores[i] + "\n");
                 }
                 writer.close();
             }
-
         } catch (IOException e) {
             System.out.println("An error occurred: " + e);
             e.printStackTrace();
         }
     }
 
+
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        checkCollision(g);
         if(!gameOver) {
             g.drawImage(image, 0, 0, null);
             player1.update();
@@ -180,12 +182,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         if (!gameOver) {
             drawWaveOver(g);
         }
-        checkCollision(g);
         if (gameOver) {
             drawGameOver(g);
+
         }
         if(hit.getHit()){
             hit.draw(g);
+
         }
     }
 
@@ -223,12 +226,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 Enemy enemy = enemies.get(j);
                 if (enemy != null && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
                         bullet.y >= enemy.y && bullet.y <= enemy.y + enemy.height) {
-                    // Collision detected, remove bullet and enemy
-                    hit = new Hit(enemy.x, enemy.y, 50,50);
-                    hit.setHit(true);
-                    if (!b1.isEmpty()) {
-                        b1.remove(bullet);
-                    }
+//                    hit = new Hit(enemy.x, enemy.y, 50,50);
+//                    hit.setHit(true);
+                    Sound sound = new Sound();
+                    sound.setFile(1);
+                    sound.play();
+                    b1.remove(bullet);
                     heartsController.spawnHearts(g, enemy.x, enemy.y);
                     enemyController.removeEnemy(j);
                     enemyController.addEnemyKilled();
@@ -246,6 +249,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             for(int i = 0; i < e.getB2().size(); i++){
                 if(e.getB2().get(i).x >= player1.x && e.getB2().get(i).x <= player1.x + player1.width &&
                         e.getB2().get(i).y >= player1.y && e.getB2().get(i).y <= player1.y + player1.height){
+                    Sound sound = new Sound();
+                    sound.setFile(2);
+                    sound.play();
                     player1.lostLife();
                     e.getB2().remove(0);
                     i--;
@@ -264,6 +270,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         //player 1's bullet movements
         if (k.getKeyCode() == KeyEvent.VK_SPACE) {
+            Sound sound = new Sound();
+            sound.setFile(0);
+            sound.play();
             Bullet bullet1 = new Bullet(Color.WHITE, player1.x + player1.width / 2, player1.y + player1.height / 2, 5, 5, 0, 0);
             b1.add(bullet1);
             bullet1.setDx(10);
@@ -315,6 +324,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 baseHP += 10;
             }
             if (System.currentTimeMillis() - waveOverTimer < 2000) {
+                Sound sound = new Sound();
+                sound.setFile(4);
+                sound.play();
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Century Gothic", Font.PLAIN, 18));
                 String s = "-  W A V E  " + (waveNumber - 1) + "  C L E A R E D  -";

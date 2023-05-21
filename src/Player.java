@@ -16,7 +16,6 @@ public class Player extends Rectangle{
         setBounds(x,y,width,height);
         this.dx = dx;
         this.dy = dy;
-        lives = 3;
         try {
             image = ImageIO.read(getClass().getResource("spaceship.png"));
         } catch (Exception e) {

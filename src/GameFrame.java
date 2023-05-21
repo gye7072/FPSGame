@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +28,6 @@ public class GameFrame extends JFrame implements ActionListener {
     private static int firstTime;
     private static GamePanel gamePanel;
     private static JFrame gameFrame;
-    private Sound sound;
     private int score;
 
     public GameFrame() {
@@ -37,38 +37,29 @@ public class GameFrame extends JFrame implements ActionListener {
         setResizable(false);
         this.pack();
         this.setVisible(true);
-        createScoresFile();
-//      Center the frame on the screen
-
-//        playButton = new JButton("Play");
-//        playButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 50, 200, 50);
-//        add(playButton);
-//        helpButton = new JButton("Help");
-//        helpButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 100, 200, 50);
-//        add(helpButton);
-//
-//        leaderBoardButton = new JButton("LeaderBoard");
-//        leaderBoardButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 150, 200, 50);
-//        add(leaderBoardButton);
-//
-//        quitButton = new JButton("Quit");
-//        quitButton.setBounds(FRAME_WIDTH / 2 - 100, FRAME_HEIGHT / 2 + 200, 200, 50);
-//        add(helpButton);
-
+        File scoresFile = new File(SCORES_FILE);
+        if (!scoresFile.exists()) {
+            try {
+                scoresFile.createNewFile();
+                FileWriter writer = new FileWriter(scoresFile);
+                for (int i = 0; i < NUM_HIGH_SCORES; i++) {
+                    writer.write("0\n");
+                }
+                writer.close();
+            } catch (IOException e) {
+                System.out.println("Failed to create scores file: " + e.getMessage());
+            }
+        }
         setLocationRelativeTo(null);
         playButton.addActionListener(this);
         helpButton.addActionListener(this);
         leaderBoardButton.addActionListener(this);
         quitButton.addActionListener(this);
-        sound = new Sound();
-        sound.setFile(0);
-        sound.play();
 
     }
     public void actionPerformed(ActionEvent e) {
         // Handle button clicks
         if (e.getSource() == playButton) {
-            sound.stop();
             // Start the game
             this.dispose();
             if(firstTime == 0) {
@@ -98,74 +89,23 @@ public class GameFrame extends JFrame implements ActionListener {
                             " of lives you have by one",
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
-            int[] scores = loadHighScores();
-            int[] newScores = new int[scores.length + 1];
-            for (int i = 0; i < scores.length; i++) {
-                newScores[i] = scores[i];
+            try (Scanner scanner = new Scanner(new File(SCORES_FILE))) {
+                String message = "High Scores:\n";
+                int count = 0;
+                while (scanner.hasNextInt() && count < NUM_HIGH_SCORES) {
+                    int score = scanner.nextInt();
+                    message += "Player " + (count + 1) + ": " + score + "\n";
+                    count++;
+                }
+                scanner.close();
+                JOptionPane.showMessageDialog(this, message, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                System.out.println("Failed to read scores file: " + ex.getMessage());
             }
-            score = newScores[newScores.length - 1];
-            newScores[newScores.length - 1] = this.score; // update the last score with the current game score
-            Arrays.sort(newScores);
-            saveHighScores(newScores);
-            String message = "High Scores:";
-            int count = 0;
-            for (int i = newScores.length - 1; i >= 0 && count < NUM_HIGH_SCORES; i--) {
-                message += "\nPlayer " + (count + 1) + ": " + newScores[i];
-                count++;
-            }
-            JOptionPane.showMessageDialog(this, message, "Leaderboard", JOptionPane.INFORMATION_MESSAGE);
-        } else if(e.getSource() == quitButton){
+        }else if(e.getSource() == quitButton){
             System.exit(0);
         }
     }
-
-    private void createScoresFile() {
-        File scoresFile = new File(SCORES_FILE);
-        if (!scoresFile.exists()) {
-            try {
-                scoresFile.createNewFile();
-            } catch (IOException e) {
-                System.out.println("Failed to create scores file: " + e.getMessage());
-            }
-        }
-    }
-
-
-    public int[] loadHighScores() {
-        try (Scanner scanner = new Scanner(new File(SCORES_FILE))) {
-            ArrayList<Integer> scores = new ArrayList<Integer>();
-            while (scanner.hasNextInt()) {
-                scores.add(scanner.nextInt());
-            }
-            int[] result = new int[scores.size()];
-            for (int i = 0; i < result.length; i++) {
-                result[i] = scores.get(i);
-            }
-            Arrays.sort(result);
-            return result;
-        } catch (IOException e) {
-            // Return an empty array if the file can't be read
-            return new int[0];
-        }
-    }
-
-    public void saveHighScores(int[] scores) {
-        try {
-            // Open the scores file for writing
-            java.io.FileWriter writer = new java.io.FileWriter(SCORES_FILE, false);
-
-            // Write each score to the file, up to the top ten high scores
-            for (int i = 0; i < Math.min(NUM_HIGH_SCORES, scores.length); i++) {
-                writer.write(scores[scores.length - 1 - i] + "\n");
-            }
-
-            // Close the file
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("Failed to save high scores: " + e.getMessage());
-        }
-    }
-
 
 
 }

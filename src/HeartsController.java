@@ -10,6 +10,7 @@ public class HeartsController {
     private Hearts hearts;
     private boolean dropped;
     private boolean gameOver;
+    private Sound sound;
 
     public HeartsController(ArrayList<Enemy> enemies, ArrayList<Bullet> bullets, Player player) {
         this.enemies = enemies;
@@ -37,6 +38,9 @@ public class HeartsController {
                         hearts.draw(g);
                         if (hearts != null && hearts.getX() >= player.x && hearts.getX() <= player.x + player.width &&
                                 hearts.getY() >= player.y && hearts.getY() <= player.y + player.height) {
+                            sound = new Sound();
+                            sound.setFile(3);
+                            sound.play();
                             player.addLife(hearts.getLifePoints());
                             h1.remove(hearts);
                             dropped = false;

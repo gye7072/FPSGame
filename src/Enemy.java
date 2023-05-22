@@ -12,6 +12,7 @@ public class Enemy extends Rectangle{
     private ArrayList<Bullet> b2 = new ArrayList<Bullet>();
     private Color color;
     private boolean shoot;
+    private boolean isDead;
 
     long timer = -1;
     private BufferedImage image;
@@ -34,24 +35,28 @@ public class Enemy extends Rectangle{
     public void tick() {
         this.x += dx;
         this.y += dy;
+        if(!isDead) {
+            if (timer == -1) {
+                timer = System.currentTimeMillis();
+            }
 
-        if (timer == -1) {
-            timer = System.currentTimeMillis();
-        }
+            if (System.currentTimeMillis() - timer >= 1000) {
+                shoot = true;
+                timer = System.currentTimeMillis();
+            }
 
-        if (System.currentTimeMillis() - timer >= 1000) {
-            shoot = true;
-            timer = System.currentTimeMillis();
-        }
-
-        if (System.currentTimeMillis() - timer > 1000) {
-            timer = -1;
-            shoot = false;
+            if (System.currentTimeMillis() - timer > 1000) {
+                timer = -1;
+                shoot = false;
+            }
         }
     }
 
+
     public void draw(Graphics g) {
-        g.drawImage(image, this.x, this.y, this.width, this.height,null);
+        if(!isDead){
+            g.drawImage(image, this.x, this.y, this.width, this.height,null);
+        }
         if(shoot){
             Bullet bullet = new Bullet(Color.GREEN, this.x + this.width / 2, this.y + this.height / 2, 5, 5, (this.dx * 2), 0);
             b2.add(bullet);
@@ -62,6 +67,14 @@ public class Enemy extends Rectangle{
 
     public ArrayList<Bullet> getB2(){
         return b2;
+    }
+
+    public void isDead(boolean i){
+        isDead = i;
+    }
+
+    public boolean getIsDead(){
+        return isDead;
     }
 
     public void setDx(int dx){
@@ -80,8 +93,5 @@ public class Enemy extends Rectangle{
         this.dy = dy;
     }
 
-    public void update(){
-
-    }
 
 }

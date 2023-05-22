@@ -63,6 +63,10 @@ public class EnemyController {
     public void setSpawnEnabled(boolean b){
         spawnEnabled = b;
     }
+
+    public void setEnemyDead(int i) {
+        e.get(i).isDead(true);
+    }
     public void removeEnemy(int i) {
         e.remove(i);
     }

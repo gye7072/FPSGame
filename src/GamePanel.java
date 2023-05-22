@@ -33,7 +33,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     private String gameOverMessage;
     private boolean alreadyExecuted;
-    private Hit hit;
 
     private BufferedImage image;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
@@ -53,7 +52,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
         heartsController = new HeartsController(enemyController.getEnemyList(), b1, player1);
-        hit = new Hit(player1.x, player1.y, 100,100);
         player1.setLives(3);
         killCount = 0;
         highScore = 0;
@@ -134,9 +132,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             Scanner scanner = new Scanner(file);
 
             int[] scores = new int[index + 1];
-            int count = 0;
-            while (scanner.hasNextInt() && count < scores.length) {
-                scores[count] = scanner.nextInt();
+                int count = 0;
+                while (scanner.hasNextInt() && count < scores.length) {
+                    scores[count] = scanner.nextInt();
                 count++;
             }
             scanner.close();
@@ -166,6 +164,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player1.update();
             player1.draw(g);
         }
+
         enemyController.draw(g);
         heartsController.draw(g);
         for (Bullet bullet : b1) {
@@ -184,10 +183,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
         if (gameOver) {
             drawGameOver(g);
-
-        }
-        if(hit.getHit()){
-            hit.draw(g);
 
         }
     }
@@ -218,6 +213,25 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
 
+        //keeps displaying bullets that were shot before the enemy was killed
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy enemy = enemies.get(i);
+            if(enemy.getIsDead()) {
+                for (int j = 0; j < enemy.getB2().size(); j++) {
+                    Bullet bullet = enemy.getB2().get(j);
+                    if (bullet.x >= PANEL_WIDTH || bullet.x <= 0 ||
+                            bullet.y >= PANEL_HEIGHT || bullet.y <= 0) {
+                        enemy.getB2().remove(bullet);
+                        j--;
+                    }
+                }
+                if (enemy.getB2().isEmpty()) {
+                    enemyController.removeEnemy(i);
+                    i--;
+                }
+            }
+        }
+
 
         // Check for collisions between player bullets and enemies
         for (int i = 0; i < b1.size(); i++) {
@@ -226,14 +240,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 Enemy enemy = enemies.get(j);
                 if (enemy != null && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
                         bullet.y >= enemy.y && bullet.y <= enemy.y + enemy.height) {
-//                    hit = new Hit(enemy.x, enemy.y, 50,50);
-//                    hit.setHit(true);
                     Sound sound = new Sound();
                     sound.setFile(1);
                     sound.play();
                     b1.remove(bullet);
+                    i--;
                     heartsController.spawnHearts(g, enemy.x, enemy.y);
-                    enemyController.removeEnemy(j);
+                    enemyController.setEnemyDead(j);
                     enemyController.addEnemyKilled();
                     killCount++;
                 }
@@ -252,11 +265,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     Sound sound = new Sound();
                     sound.setFile(2);
                     sound.play();
+                    player1.setHit(true);
+                    player1.draw(g);
                     player1.lostLife();
                     e.getB2().remove(0);
                     i--;
-                    hit = new Hit(player1.x, player1.y, 50,50);
-                    hit.setHit(true);
                 }
             }
         }

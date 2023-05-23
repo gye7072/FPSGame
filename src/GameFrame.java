@@ -1,15 +1,9 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class GameFrame extends JFrame implements ActionListener {
@@ -23,13 +17,14 @@ public class GameFrame extends JFrame implements ActionListener {
     private JButton helpButton;
     private JButton leaderBoardButton;
     private JButton quitButton;
+    private JTextField textField;
     private static final String SCORES_FILE = "scores.txt";
     private static final int NUM_HIGH_SCORES = 10;
     private static int firstTime;
     private static GamePanel gamePanel;
     private static JFrame gameFrame;
-    private int score;
-
+    public static String userName;
+    public static String[][] userNames;
     public GameFrame() {
         setContentPane(mainPanel);
         setTitle("Defend the Base");
@@ -55,12 +50,15 @@ public class GameFrame extends JFrame implements ActionListener {
         helpButton.addActionListener(this);
         leaderBoardButton.addActionListener(this);
         quitButton.addActionListener(this);
-
+        userNames = new String[10][10];
     }
     public void actionPerformed(ActionEvent e) {
         // Handle button clicks
         if (e.getSource() == playButton) {
             // Start the game
+            userName = textField.getText();
+            System.out.println(GameFrame.userName);
+            System.out.println(userName);
             this.dispose();
             if(firstTime == 0) {
                 gamePanel = new GamePanel();
@@ -93,8 +91,10 @@ public class GameFrame extends JFrame implements ActionListener {
                 String message = "High Scores:\n";
                 int count = 0;
                 while (scanner.hasNextInt() && count < NUM_HIGH_SCORES) {
-                    int score = scanner.nextInt();
-                    message += "Player " + (count + 1) + ": " + score + "\n";
+                    String score = scanner.nextLine();
+                    message += userName + ": " + score + "\n";
+                    System.out.println(GameFrame.userName);
+                    System.out.println(userName);
                     count++;
                 }
                 scanner.close();

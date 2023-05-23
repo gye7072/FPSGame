@@ -34,7 +34,7 @@ public class HeartsController {
             if (dropped) {
                 for (int i = 0; i < h1.size(); i++) {
                     hearts = h1.get(i);
-                    if (hearts.getSpawnTime() < 3000 && hearts.getSpawnTime() > 200) {
+                    if (hearts.getSpawnTime() < 2000 && hearts.getSpawnTime() > 200) {
                         hearts.draw(g);
                         if (hearts != null && hearts.getX() >= player.x && hearts.getX() <= player.x + player.width &&
                                 hearts.getY() >= player.y && hearts.getY() <= player.y + player.height) {
@@ -47,7 +47,7 @@ public class HeartsController {
                         }
                     }
                 }
-                if (hearts.getSpawnTime() > 3000) {
+                if (hearts.getSpawnTime() > 2000) {
                     h1.remove(hearts);
                     dropped = false;
                 }

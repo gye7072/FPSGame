@@ -6,9 +6,6 @@ public class EnemyController {
 
     private int enemyCount;
     private int enemyKilled;
-    private int waveNumber;
-    private boolean waveOver;
-    private boolean gameOver;
     private long lastSpawnTime;
     private long spawnDelay;
     private int enemySpeed;
@@ -19,8 +16,6 @@ public class EnemyController {
     public EnemyController(int enemyCount, int enemyKilled) {
         this.enemyCount = enemyCount;
         this.enemyKilled = enemyKilled;
-        this.waveOver = false;
-        this.gameOver = false;
         this.spawnEnabled = true;
         this.lastSpawnTime = System.currentTimeMillis();
         enemySpeed = 0;
@@ -33,24 +28,22 @@ public class EnemyController {
 
     public void spawnEnemies() {
         if(spawnEnabled) {
-            if (!gameOver && (System.currentTimeMillis() - lastSpawnTime >= spawnDelay) && (numSpawned < enemyCount)) {
+            if (!GamePanel.gameOver && (System.currentTimeMillis() - lastSpawnTime >= spawnDelay) && (numSpawned < enemyCount)) {
                 lastSpawnTime = System.currentTimeMillis();
                 int y = (int) (Math.random() * (GamePanel.PANEL_HEIGHT - 50));
-                Enemy enemy = new Enemy(Color.GREEN, GamePanel.PANEL_WIDTH - 50, y, 50,50, waveNumber, 0);
+                Enemy enemy = new Enemy(Color.GREEN, GamePanel.PANEL_WIDTH - 50, y, 50,50, GamePanel.waveNumber, 0);
                 enemy.addDx(enemySpeed);
                 e.add(enemy);
                 numSpawned++;
             }
         }
 
-        if (!gameOver && (enemyKilled == enemyCount)) {
-            waveNumber++;
+        if (!GamePanel.gameOver && (enemyKilled == enemyCount)) {
             enemyCount++;
-            waveOver = true;
             enemyKilled = 0;
             numSpawned = 0;
             enemySpeed -= 1;
-            if(waveNumber == 10){
+            if(GamePanel.waveNumber == 10){
                 enemySpeed -= 1;
             }
             if(spawnDelay != 500) {
@@ -83,12 +76,8 @@ public class EnemyController {
         enemyKilled++;
     }
 
-    public void setGameOver(boolean gameOver) {
-        this.gameOver = gameOver;
-    }
-
     public void tick() {
-        if (!gameOver) {
+        if (!GamePanel.gameOver) {
             spawnEnemies();
         }
         if (!e.isEmpty()) {
@@ -99,10 +88,10 @@ public class EnemyController {
     }
 
     public void draw(Graphics g) {
-        if (!gameOver) {
+        if (!GamePanel.gameOver) {
             spawnEnemies();
         }
-        if (!e.isEmpty() || !waveOver) {
+        if (!e.isEmpty() || !GamePanel.waveOver) {
             for (int i = 0; i < e.size(); i++) {
                 e.get(i).draw(g);
             }

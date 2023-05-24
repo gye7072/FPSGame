@@ -24,7 +24,6 @@ public class GameFrame extends JFrame implements ActionListener {
     private static GamePanel gamePanel;
     private static JFrame gameFrame;
     public static String userName;
-    public static String[][] userNames;
     public GameFrame() {
         setContentPane(mainPanel);
         setTitle("Defend the Base");
@@ -38,6 +37,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 scoresFile.createNewFile();
                 FileWriter writer = new FileWriter(scoresFile);
                 for (int i = 0; i < NUM_HIGH_SCORES; i++) {
+                    writer.write("Computer\n");
                     writer.write("0\n");
                 }
                 writer.close();
@@ -50,15 +50,12 @@ public class GameFrame extends JFrame implements ActionListener {
         helpButton.addActionListener(this);
         leaderBoardButton.addActionListener(this);
         quitButton.addActionListener(this);
-        userNames = new String[10][10];
     }
     public void actionPerformed(ActionEvent e) {
         // Handle button clicks
         if (e.getSource() == playButton) {
-            // Start the game
             userName = textField.getText();
-            System.out.println(GameFrame.userName);
-            System.out.println(userName);
+            // Start the game
             this.dispose();
             if(firstTime == 0) {
                 gamePanel = new GamePanel();
@@ -88,13 +85,12 @@ public class GameFrame extends JFrame implements ActionListener {
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
             try (Scanner scanner = new Scanner(new File(SCORES_FILE))) {
-                String message = "High Scores:\n";
+                String message = "Top 10 High Scores:\n";
                 int count = 0;
-                while (scanner.hasNextInt() && count < NUM_HIGH_SCORES) {
-                    String score = scanner.nextLine();
-                    message += userName + ": " + score + "\n";
-                    System.out.println(GameFrame.userName);
-                    System.out.println(userName);
+                while (scanner.hasNextLine() && count < NUM_HIGH_SCORES) {
+                    String name = scanner.nextLine();
+                    int score = Integer.parseInt(scanner.nextLine());
+                    message += name + ": " + score + "\n";
                     count++;
                 }
                 scanner.close();

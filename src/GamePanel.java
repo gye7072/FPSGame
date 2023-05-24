@@ -12,27 +12,28 @@ import java.awt.event.KeyListener;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
-    public static int PANEL_WIDTH = 1000;
-    public static int PANEL_HEIGHT = 600;
-    static final Dimension PANEL_SIZE = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
+    public static final int PANEL_WIDTH = 1000;
+    public static final int PANEL_HEIGHT = 600;
+    public static final Dimension PANEL_SIZE = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
     private Player player1;
 
     private EnemyController enemyController;
     private HeartsController heartsController;
-    private boolean waveOver;
+    public static boolean waveOver;
     private int baseHP;
     private long waveOverTimer = -1;
-    private static int waveNumber;
+    public static int waveNumber;
     private JButton retryButton;
     private JButton mainMenuButton;
     private long timer = -1;
     private int killCount;
     private int highScore;
 
-    private boolean gameOver;
+    public static boolean gameOver;
 
     private String gameOverMessage;
     private boolean alreadyExecuted;
+    private boolean alreadyExecuted2;
 
     private BufferedImage image;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
@@ -56,6 +57,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
+        alreadyExecuted2 = false;
         waveNumber = 1;
         baseHP = 100;
         enemyController.getEnemyList().clear();
@@ -93,8 +95,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             gameOverMessage = "Your base was destroyed!";
         }
         if (gameOver) {
-            heartsController.setGameOver(true);
-            enemyController.setGameOver(true);
             b1.clear();
             if (!alreadyExecuted) {
                 Sound sound = new Sound();
@@ -131,20 +131,35 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             File file = new File("scores.txt");
             Scanner scanner = new Scanner(file);
 
+            String[] names = new String[index +1];
             int[] scores = new int[index + 1];
                 int count = 0;
-                while (scanner.hasNextInt() && count < scores.length) {
-                    scores[count] = scanner.nextInt();
+                while (scanner.hasNextLine() && count < scores.length) {
+                    names[count] = scanner.nextLine();
+                    scores[count] = Integer.parseInt(scanner.nextLine());
                 count++;
             }
             scanner.close();
 
             if (highScore > scores[index]) {
-                scores[count - 1] = highScore;
-                Arrays.sort(scores);
+                names[index] = GameFrame.userName;
+                System.out.println("Testing 1" + names[index]);
+                scores[index] = highScore;
+
+                for(int i = scores.length-1; i > 0; i--){
+                    if(scores[i] > scores[i-1]){
+                        String tempName = names[i-1];
+                        int tempScore = scores[i-1];
+                        names[i-1] = names[i];
+                        scores[i-1] = scores[i];
+                        names[i] = tempName;
+                        scores[i] = tempScore;
+                    }
+                }
 
                 FileWriter writer = new FileWriter(file);
-                for (int i = scores.length - 1; i >= 0; i--) {
+                for (int i = 0; i < scores.length; i++) {
+                    writer.write(names[i] + "\n");
                     writer.write(scores[i] + "\n");
                 }
                 writer.close();
@@ -243,9 +258,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     Sound sound = new Sound();
                     sound.setFile(1);
                     sound.play();
-                    b1.remove(bullet);
-                    i--;
-                    heartsController.spawnHearts(g, enemy.x, enemy.y);
+                    while(b1.contains(bullet)) {
+                        b1.remove(bullet);
+                        if(i > 0) {
+                            i--;
+                        }
+                    }
+                    if(!alreadyExecuted2) {
+                        heartsController.spawnHearts(g, enemy.x, enemy.y);
+                        alreadyExecuted2 = true;
+                    }
                     enemyController.setEnemyDead(j);
                     enemyController.addEnemyKilled();
                     killCount++;
@@ -407,11 +429,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         waveNumber = 1;
         baseHP = 100;
         enemyController.getEnemyList().clear();
-        heartsController.setGameOver(false);
         b1.clear();
         gameOver = false;
         gameOverMessage = "";
-        enemyController.setGameOver(false);
         enemyController = new EnemyController(3, 0);
         repaint();
     }

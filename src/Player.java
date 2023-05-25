@@ -22,7 +22,7 @@ public class Player extends Rectangle{
         try {
             image = ImageIO.read(getClass().getResource("spaceship.png"));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Failed to set spaceship image " + e.getMessage());
         }
     }
 
@@ -42,14 +42,14 @@ public class Player extends Rectangle{
                 try {
                     image = ImageIO.read(getClass().getResource("spaceship.png"));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.out.println("Failed to set spaceship image " + e.getMessage());
                 }
             }
             if (System.currentTimeMillis() - hitTimer < 200) {
                 try {
                     image = ImageIO.read(getClass().getResource("hit.png"));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("Failed to set to hit image " + e.getMessage());
                 }
             }
         }

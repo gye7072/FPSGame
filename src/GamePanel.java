@@ -20,7 +20,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private EnemyController enemyController;
     private HeartsController heartsController;
     public static boolean waveOver;
-    private int baseHP;
+    private int planetHP;
     private long waveOverTimer = -1;
     public static int waveNumber;
     private JButton retryButton;
@@ -47,19 +47,19 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         try {
             image = ImageIO.read(getClass().getResource("background.png"));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Failed to set background image: " + e.getMessage());
         }
 
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
         heartsController = new HeartsController(enemyController.getEnemyList(), b1, player1);
         player1.setLives(3);
+        planetHP = 100;
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
         alreadyExecuted2 = false;
         waveNumber = 1;
-        baseHP = 100;
         enemyController.getEnemyList().clear();
         b1.clear();
         gameOverMessage = "";
@@ -88,11 +88,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             player1.setLives(0);
             enemyController.getEnemyList().clear();
             gameOver = true;
-            gameOverMessage = "You lost all your lives!";
-        } else if (baseHP <= 0) {
-            baseHP = 0;
+            gameOverMessage = "Your spaceship was destroyed!";
+        } else if (planetHP <= 0) {
+            planetHP = 0;
             gameOver = true;
-            gameOverMessage = "Your base was destroyed!";
+            gameOverMessage = "The planet was destroyed!";
         }
         if (gameOver) {
             b1.clear();
@@ -143,7 +143,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
             if (highScore > scores[index]) {
                 names[index] = GameFrame.userName;
-                System.out.println("Testing 1" + names[index]);
                 scores[index] = highScore;
 
                 for(int i = scores.length-1; i > 0; i--){
@@ -165,8 +164,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 writer.close();
             }
         } catch (IOException e) {
-            System.out.println("An error occurred: " + e);
-            e.printStackTrace();
+            System.out.println("Failed to update score " + e.getMessage());
         }
     }
 
@@ -210,11 +208,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         for (int i = 0; i < enemies.size(); i++) {
             Enemy enemy = enemies.get(i);
             if (enemy != null && enemy.x + enemy.width < 0) {
-                // Enemy has gone off-screen, remove it and decrement base HP
+                // Enemy has gone off-screen, remove it and decrement planet HP
                 enemies.remove(i);
                 enemyController.addEnemyKilled();
                 i--;
-                baseHP = baseHP - waveNumber;
+                planetHP = planetHP - waveNumber;
             }
         }
 
@@ -272,6 +270,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     enemyController.addEnemyKilled();
                     killCount++;
                 }
+                alreadyExecuted2 = false;
             }
         }
         if (enemyController.getEnemyKilled() == enemyController.getEnemyCount()) {
@@ -356,7 +355,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 waveOver = false;
                 waveOverTimer = -1;
                 enemyController.setSpawnEnabled(true);
-                baseHP += 10;
+                planetHP += 10;
             }
             if (System.currentTimeMillis() - waveOverTimer < 2000) {
                 Sound sound = new Sound();
@@ -386,8 +385,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.drawString(livesStr, 15, 40);
         String killCountStr  = "Kill Count: " + killCount;
         g.drawString(killCountStr, 15, 70);
-        String baseStr = "Base HP: " + baseHP;
-        g.drawString(baseStr, 15, 100);
+        String planetStr = "Planet HP: " + planetHP;
+        g.drawString(planetStr, 15, 100);
         String waveStr = "Wave: " + waveNumber;
         g.drawString(waveStr, 15, 130);
     }
@@ -397,10 +396,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setColor(Color.WHITE);
         int strWidth = g.getFontMetrics().stringWidth(gameOverMessage);
         g.setFont(new Font("Impact", Font.BOLD, 100));
-        g.drawString("G A M E  O V E R", PANEL_WIDTH / 2 - strWidth-50, PANEL_HEIGHT / 2 - 50);
+        g.drawString("G A M E  O V E R", PANEL_WIDTH / 2 - strWidth, PANEL_HEIGHT / 2 - 50);
         g.setFont(new Font("Impact", Font.BOLD, 25));
-        g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 100, PANEL_HEIGHT / 2 - 10);
-        g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 140, PANEL_HEIGHT/2 + 25);
+        g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 150, PANEL_HEIGHT / 2 - 10);
+        g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 225, PANEL_HEIGHT/2 + 25);
 
     }
 
@@ -427,7 +426,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         killCount = 0;
         alreadyExecuted = false;
         waveNumber = 1;
-        baseHP = 100;
+        planetHP = 100;
         enemyController.getEnemyList().clear();
         b1.clear();
         gameOver = false;

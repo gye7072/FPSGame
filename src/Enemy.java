@@ -26,7 +26,7 @@ public class Enemy extends Rectangle{
         try {
             image = ImageIO.read(getClass().getResource("enemy.png"));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Failed to set enemy image " + e.getMessage());
         }
 
     }

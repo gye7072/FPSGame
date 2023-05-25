@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class Hearts {
     private BufferedImage image;
-    private boolean dropped;
     private int x;
     private int y;
     private int lifePoints;
@@ -18,7 +17,7 @@ public class Hearts {
         try {
             image = ImageIO.read(getClass().getResource("heart.png"));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Failed to set heart image " + e.getMessage());
         }
         if(timer == -1){
             timer = System.currentTimeMillis();
@@ -28,7 +27,6 @@ public class Hearts {
     public long getSpawnTime(){
         return (System.currentTimeMillis() - timer);
     }
-
     public int getX(){
         return x;
     }

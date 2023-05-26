@@ -34,8 +34,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private String gameOverMessage;
     private boolean alreadyExecuted;
     private boolean alreadyExecuted2;
+    private int dx1,dy1,dx2,dy2;
+    private int srcx1,srcy1,srcx2,srcy2;
 
     private BufferedImage image;
+    private BufferedImage image2;
     private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
 
@@ -45,11 +48,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         setPreferredSize(PANEL_SIZE);
         setBackground(Color.BLACK);
         try {
-            image = ImageIO.read(getClass().getResource("background.png"));
+            image = ImageIO.read(getClass().getResource("background2.png"));
+            image2 = ImageIO.read(getClass().getResource("background2.png"));
         } catch (Exception e) {
             System.out.println("Failed to set background image: " + e.getMessage());
         }
-
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(3, 0);
         heartsController = new HeartsController(enemyController.getEnemyList(), b1, player1);
@@ -67,11 +70,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         gameOver = false;
         addKeyListener(this);
         setFocusable(true);
+        initImagePoints();
         t.start();
 
     }
 
     public void actionPerformed(ActionEvent e) {
+        moveBackground();
+        repaint();
         if (!gameOver) {
             player1.tick();
             for (int i = 0; i < b1.size(); i++) {
@@ -103,7 +109,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 highScore = killCount + waveNumber;
                 updateScores(9);
                 retryButton = new JButton("Retry");
-//                retryButton.setBackground(Color.WHITE);
                 retryButton.setBounds(PANEL_WIDTH / 2 - 100, PANEL_HEIGHT / 2 + 50, 200, 50);
                 add(retryButton);
                 mainMenuButton = new JButton("Main Menu");
@@ -123,7 +128,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 switchToMainMenu();
             }
         }
-
         repaint();
     }
     public void updateScores(int index) {
@@ -173,7 +177,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         super.paintComponent(g);
         checkCollision(g);
         if(!gameOver) {
-            g.drawImage(image, 0, 0, null);
+            g.drawImage(image, dx1, dy1, dx2, dy2, srcx1, srcy1, srcx2, srcy2, this);
+            g.drawImage(image2,dx1, dy1, dx2, dy2, srcx1 + 10, srcy1, srcx2, srcy2, this);
             player1.update();
             player1.draw(g);
         }
@@ -199,6 +204,43 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         }
     }
+
+    private void initImagePoints() {
+        dx1 = 0;
+        dy1 = 0;
+        dx2 = PANEL_WIDTH;
+        dy2 = PANEL_HEIGHT;
+        srcx1 = 0;
+        srcy1 = 0;
+        srcx2 = PANEL_WIDTH;
+        srcy2 = PANEL_HEIGHT;
+    }
+
+
+    public void moveBackground() {
+        if (srcx1 > image.getWidth()) {
+            srcx1 = 0;
+            srcy1 = 0;
+            srcx2 = PANEL_WIDTH;
+            srcy2 = PANEL_HEIGHT;
+
+        } else {
+            srcx1 += enemyController.getEnemySpeed() + 5;
+            srcx2 += enemyController.getEnemySpeed() + 5;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public void checkCollision(Graphics g) {
@@ -429,6 +471,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         planetHP = 100;
         enemyController.getEnemyList().clear();
         b1.clear();
+        heartsController.getH1().clear();
         gameOver = false;
         gameOverMessage = "";
         enemyController = new EnemyController(3, 0);

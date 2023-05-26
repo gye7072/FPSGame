@@ -52,4 +52,8 @@ public class HeartsController {
             }
         }
     }
+
+    public ArrayList<Hearts> getH1() {
+        return h1;
+    }
 }

@@ -52,6 +52,9 @@ public class EnemyController {
             e.clear();
         }
     }
+    public int getEnemySpeed(){
+        return enemySpeed;
+    }
 
     public void setSpawnEnabled(boolean b){
         spawnEnabled = b;

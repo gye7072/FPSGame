@@ -54,10 +54,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             System.out.println("Failed to set background image: " + e.getMessage());
         }
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
-        enemyController = new EnemyController(3, 0);
-        heartsController = new HeartsController(enemyController.getEnemyList(), b1, player1);
-        player1.setLives(3);
-        planetHP = 100;
+        enemyController = new EnemyController(5, 0);
+        heartsController = new HeartsController(enemyController.getEnemyList(), player1);
+        player1.setLives(300000000);
+        planetHP = 1000000000;
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
@@ -470,6 +470,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         waveNumber = 1;
         planetHP = 100;
         enemyController.getEnemyList().clear();
+        heartsController.getH1().clear();
         b1.clear();
         heartsController.getH1().clear();
         gameOver = false;

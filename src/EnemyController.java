@@ -42,9 +42,13 @@ public class EnemyController {
             enemyCount++;
             enemyKilled = 0;
             numSpawned = 0;
-            enemySpeed -= 1;
-            if(GamePanel.waveNumber == 10){
+            if(enemySpeed != 15) {
                 enemySpeed -= 1;
+            }
+            if(GamePanel.waveNumber == 10){
+                if(enemySpeed != 15) {
+                    enemySpeed -= 1;
+                }
             }
             if(spawnDelay != 500) {
                 spawnDelay -= 100;

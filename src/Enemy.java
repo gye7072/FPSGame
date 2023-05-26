@@ -21,7 +21,7 @@ public class Enemy extends Rectangle{
         this.color = color;
         this.dx = dx;
         this.dy = dy;
-        setDx(-5);
+        setDx(-3);
         shoot = true;
         try {
             image = ImageIO.read(getClass().getResource("enemy.png"));

@@ -2,7 +2,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class HeartsController {
-    private ArrayList<Bullet> bullets;
     private ArrayList<Hearts> h1 = new ArrayList<Hearts>();
     ArrayList<Enemy> enemies;
     private Player player;
@@ -11,9 +10,8 @@ public class HeartsController {
     private boolean dropped;
     private Sound sound;
 
-    public HeartsController(ArrayList<Enemy> enemies, ArrayList<Bullet> bullets, Player player) {
+    public HeartsController(ArrayList<Enemy> enemies, Player player) {
         this.enemies = enemies;
-        this.bullets = bullets;
         this.player = player;
     }
 

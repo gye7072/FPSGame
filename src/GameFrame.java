@@ -86,8 +86,8 @@ public class GameFrame extends JFrame implements ActionListener {
                             "starts at a hundred health points\nYour high score is calculated by the number of enemies" +
                             " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
                             "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do to the planet increases " +
-                            "\nEvery time you clear a wave the planet recovers 10 health points\nEach enemy has a chance to drop a heart which can increase the amount" +
-                            " of lives you have by one",
+                            "\nEvery time you clear a wave the planet recovers ten health points\nEach enemy has a chance to drop a heart which can increase the amount" +
+                            " of lives you have left by one",
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
             try (Scanner scanner = new Scanner(new File(SCORES_FILE))) {
@@ -118,6 +118,5 @@ public class GameFrame extends JFrame implements ActionListener {
             System.exit(0);
         }
     }
-
 
 }

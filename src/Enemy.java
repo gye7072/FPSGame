@@ -9,12 +9,12 @@ public class Enemy extends Rectangle{
     private int dx;
     private int dy;
 
-    private ArrayList<Bullet> b2 = new ArrayList<Bullet>();
+    private ArrayList<Bullet> enemyBullets = new ArrayList<Bullet>();
     private Color color;
     private boolean shoot;
     private boolean isDead;
 
-    long timer = -1;
+    long shootTimer = -1;
     private BufferedImage image;
     public Enemy(Color color, int x, int y, int width, int height, int dx, int dy) {
         setBounds(x,y,width,height);
@@ -36,17 +36,17 @@ public class Enemy extends Rectangle{
         this.x += dx;
         this.y += dy;
         if(!isDead) {
-            if (timer == -1) {
-                timer = System.currentTimeMillis();
+            if (shootTimer == -1) {
+                shootTimer = System.currentTimeMillis();
             }
 
-            if (System.currentTimeMillis() - timer >= 1000) {
+            if (System.currentTimeMillis() - shootTimer >= 1000) {
                 shoot = true;
-                timer = System.currentTimeMillis();
+                shootTimer = System.currentTimeMillis();
             }
 
-            if (System.currentTimeMillis() - timer > 1000) {
-                timer = -1;
+            if (System.currentTimeMillis() - shootTimer > 1000) {
+                shootTimer = -1;
                 shoot = false;
             }
         }
@@ -59,14 +59,14 @@ public class Enemy extends Rectangle{
         }
         if(shoot){
             Bullet bullet = new Bullet(Color.GREEN, this.x + this.width / 2, this.y + this.height / 2, 5, 5, (this.dx * 2), 0);
-            b2.add(bullet);
+            enemyBullets.add(bullet);
             shoot = false;
         }
 
     }
 
-    public ArrayList<Bullet> getB2(){
-        return b2;
+    public ArrayList<Bullet> getEnemyBullets(){
+        return enemyBullets;
     }
 
     public void isDead(boolean i){
@@ -84,14 +84,5 @@ public class Enemy extends Rectangle{
     public void addDx(int dx){
         this.dx += dx;
     }
-
-    public int getDx(){
-        return dx;
-    }
-
-    public void setDy(int dy){
-        this.dy = dy;
-    }
-
 
 }

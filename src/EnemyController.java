@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class EnemyController {
-    private static ArrayList<Enemy> e = new ArrayList<Enemy>();
+    private static ArrayList<Enemy> enemies = new ArrayList<Enemy>();
 
     private int enemyCount;
     private int enemyKilled;
@@ -23,7 +23,7 @@ public class EnemyController {
     }
 
     public ArrayList<Enemy> getEnemyList() {
-        return e;
+        return enemies;
     }
 
     public void spawnEnemies() {
@@ -33,7 +33,7 @@ public class EnemyController {
                 int y = (int) (Math.random() * (GamePanel.PANEL_HEIGHT - 50));
                 Enemy enemy = new Enemy(Color.GREEN, GamePanel.PANEL_WIDTH - 50, y, 50,50, GamePanel.waveNumber, 0);
                 enemy.addDx(enemySpeed);
-                e.add(enemy);
+                enemies.add(enemy);
                 numSpawned++;
             }
         }
@@ -53,7 +53,7 @@ public class EnemyController {
             if(spawnDelay != 500) {
                 spawnDelay -= 100;
             }
-            e.clear();
+            enemies.clear();
         }
     }
     public int getEnemySpeed(){
@@ -65,10 +65,10 @@ public class EnemyController {
     }
 
     public void setEnemyDead(int i) {
-        e.get(i).isDead(true);
+        enemies.get(i).isDead(true);
     }
     public void removeEnemy(int i) {
-        e.remove(i);
+        enemies.remove(i);
     }
 
     public int getEnemyCount() {
@@ -83,24 +83,14 @@ public class EnemyController {
         enemyKilled++;
     }
 
-    public void tick() {
-        if (!GamePanel.gameOver) {
-            spawnEnemies();
-        }
-        if (!e.isEmpty()) {
-            for (int i = 0; i < e.size(); i++) {
-                e.get(i).tick();
-            }
-        }
-    }
 
     public void draw(Graphics g) {
         if (!GamePanel.gameOver) {
             spawnEnemies();
         }
-        if (!e.isEmpty() || !GamePanel.waveOver) {
-            for (int i = 0; i < e.size(); i++) {
-                e.get(i).draw(g);
+        if (!enemies.isEmpty() || !GamePanel.waveOver) {
+            for (int i = 0; i < enemies.size(); i++) {
+                enemies.get(i).draw(g);
             }
         }
     }

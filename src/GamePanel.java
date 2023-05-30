@@ -15,7 +15,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public static final int PANEL_WIDTH = 1000;
     public static final int PANEL_HEIGHT = 600;
     public static final Dimension PANEL_SIZE = new Dimension(PANEL_WIDTH, PANEL_HEIGHT);
-    private Player player1;
+    private final Player player1;
 
     private EnemyController enemyController;
     private HeartsController heartsController;
@@ -25,7 +25,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     public static int waveNumber;
     private JButton retryButton;
     private JButton mainMenuButton;
-    private long timer = -1;
     private int killCount;
     private int highScore;
 
@@ -35,8 +34,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private boolean alreadyExecuted;
     private boolean alreadyExecuted2;
     private BufferedImage image;
-    private BufferedImage image2;
-    private ArrayList<Bullet> b1 = new ArrayList<Bullet>();
+    private ArrayList<Bullet> playerBullets = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
 
 
@@ -52,15 +50,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         player1 = new Player( 50, PANEL_HEIGHT / 2, 50,50, 0,0);
         enemyController = new EnemyController(5, 0);
         heartsController = new HeartsController(enemyController.getEnemyList(), player1);
-        player1.setLives(300000000);
-        planetHP = 1000000000;
+        player1.setLives(3);
+        planetHP = 100;
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
         alreadyExecuted2 = false;
         waveNumber = 1;
         enemyController.getEnemyList().clear();
-        b1.clear();
+        playerBullets.clear();
         gameOverMessage = "";
         setDoubleBuffered(true);
         gameOver = false;
@@ -74,13 +72,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         repaint();
         if (!gameOver) {
             player1.tick();
-            for (int i = 0; i < b1.size(); i++) {
-                b1.get(i).tick();
+            for (int i = 0; i < playerBullets.size(); i++) {
+                playerBullets.get(i).tick();
             }
             for (Enemy enemy : enemyController.getEnemyList()) {
                 enemy.tick();
-                for(int i = 0; i < enemy.getB2().size(); i++){
-                    enemy.getB2().get(i).tick();
+                for(int i = 0; i < enemy.getEnemyBullets().size(); i++){
+                    enemy.getEnemyBullets().get(i).tick();
                 }
             }
         }
@@ -95,7 +93,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             gameOverMessage = "The planet was destroyed!";
         }
         if (gameOver) {
-            b1.clear();
+            playerBullets.clear();
             if (!alreadyExecuted) {
                 Sound sound = new Sound();
                 sound.setFile(5);
@@ -178,14 +176,14 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         enemyController.draw(g);
         heartsController.draw(g);
-        for (Bullet bullet : b1) {
+        for (Bullet bullet : playerBullets) {
             bullet.draw(g);
         }
         // Draw the enemies
         for (Enemy enemy : enemyController.getEnemyList()) {
             enemy.draw(g);
-            for(int i = 0; i < enemy.getB2().size(); i++){
-                enemy.getB2().get(i).draw(g);
+            for(int i = 0; i < enemy.getEnemyBullets().size(); i++){
+                enemy.getEnemyBullets().get(i).draw(g);
             }
         }
         drawStats(g);
@@ -218,10 +216,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         //check if player bullets have gone off-screen
         //removes player 1 bullets if its off-screen
-        for (int i = 0; i < b1.size(); i++) {
-            if (b1.get(i).x >= PANEL_WIDTH || b1.get(i).x <= 0 ||
-                    b1.get(i).y >= PANEL_HEIGHT || b1.get(i).y <= 0) {
-                b1.remove(i);
+        for (int i = 0; i < playerBullets.size(); i++) {
+            if (playerBullets.get(i).x >= PANEL_WIDTH || playerBullets.get(i).x <= 0 ||
+                    playerBullets.get(i).y >= PANEL_HEIGHT || playerBullets.get(i).y <= 0) {
+                playerBullets.remove(i);
                 i--;
             }
         }
@@ -230,15 +228,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         for (int i = 0; i < enemies.size(); i++) {
             Enemy enemy = enemies.get(i);
             if(enemy.getIsDead()) {
-                for (int j = 0; j < enemy.getB2().size(); j++) {
-                    Bullet bullet = enemy.getB2().get(j);
+                for (int j = 0; j < enemy.getEnemyBullets().size(); j++) {
+                    Bullet bullet = enemy.getEnemyBullets().get(j);
                     if (bullet.x >= PANEL_WIDTH || bullet.x <= 0 ||
                             bullet.y >= PANEL_HEIGHT || bullet.y <= 0) {
-                        enemy.getB2().remove(bullet);
+                        enemy.getEnemyBullets().remove(bullet);
                         j--;
                     }
                 }
-                if (enemy.getB2().isEmpty()) {
+                if (enemy.getEnemyBullets().isEmpty()) {
                     enemyController.removeEnemy(i);
                     i--;
                 }
@@ -247,8 +245,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
 
         // Check for collisions between player bullets and enemies
-        for (int i = 0; i < b1.size(); i++) {
-            Bullet bullet = b1.get(i);
+        for (int i = 0; i < playerBullets.size(); i++) {
+            Bullet bullet = playerBullets.get(i);
             for (int j = 0; j < enemies.size(); j++) {
                 Enemy enemy = enemies.get(j);
                 if (enemy != null && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
@@ -256,8 +254,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     Sound sound = new Sound();
                     sound.setFile(1);
                     sound.play();
-                    while(b1.contains(bullet)) {
-                        b1.remove(bullet);
+                    while(playerBullets.contains(bullet)) {
+                        playerBullets.remove(bullet);
                         if(i > 0) {
                             i--;
                         }
@@ -280,16 +278,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
         //check collision between enemy bullets and player
         for(Enemy e : enemies){
-            for(int i = 0; i < e.getB2().size(); i++){
-                if(e.getB2().get(i).x >= player1.x && e.getB2().get(i).x <= player1.x + player1.width &&
-                        e.getB2().get(i).y >= player1.y && e.getB2().get(i).y <= player1.y + player1.height){
+            for(int i = 0; i < e.getEnemyBullets().size(); i++){
+                if(e.getEnemyBullets().get(i).x >= player1.x && e.getEnemyBullets().get(i).x <= player1.x + player1.width &&
+                        e.getEnemyBullets().get(i).y >= player1.y && e.getEnemyBullets().get(i).y <= player1.y + player1.height){
                     Sound sound = new Sound();
                     sound.setFile(2);
                     sound.play();
                     player1.setHit(true);
                     player1.draw(g);
                     player1.lostLife();
-                    e.getB2().remove(0);
+                    e.getEnemyBullets().remove(0);
                     i--;
                 }
             }
@@ -308,7 +306,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             sound.setFile(0);
             sound.play();
             Bullet bullet1 = new Bullet(Color.WHITE, player1.x + player1.width / 2, player1.y + player1.height / 2, 5, 5, 0, 0);
-            b1.add(bullet1);
+            playerBullets.add(bullet1);
             bullet1.setDx(10);
         }
 
@@ -429,7 +427,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         planetHP = 100;
         enemyController.getEnemyList().clear();
         heartsController.getH1().clear();
-        b1.clear();
+        playerBullets.clear();
         heartsController.getH1().clear();
         gameOver = false;
         gameOverMessage = "";

@@ -8,7 +8,7 @@ public class Hearts {
     private int x;
     private int y;
     private int lifePoints;
-    private long timer = -1;
+    private long spawnTimer = -1;
 
     public Hearts(int lifePoints, int x, int y) {
         this.x = x;
@@ -19,13 +19,13 @@ public class Hearts {
         } catch (Exception e) {
             System.out.println("Failed to set heart image " + e.getMessage());
         }
-        if(timer == -1){
-            timer = System.currentTimeMillis();
+        if(spawnTimer == -1){
+            spawnTimer = System.currentTimeMillis();
         }
     }
 
     public long getSpawnTime(){
-        return (System.currentTimeMillis() - timer);
+        return (System.currentTimeMillis() - spawnTimer);
     }
     public int getX(){
         return x;

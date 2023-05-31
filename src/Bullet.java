@@ -36,10 +36,6 @@ public class Bullet extends Rectangle{
         this.dx = dx;
     }
 
-    public void setDy(int dy){
-        this.dy = dy;
-    }
-
 
 
 }

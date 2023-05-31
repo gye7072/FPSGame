@@ -8,7 +8,7 @@ public class Hearts {
     private int x;
     private int y;
     private int lifePoints;
-    private long spawnTimer = -1;
+    long spawnTimer = -1;
 
     public Hearts(int lifePoints, int x, int y) {
         this.x = x;

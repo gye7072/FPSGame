@@ -33,6 +33,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private String gameOverMessage;
     private boolean alreadyExecuted;
     private boolean alreadyExecuted2;
+    private int enemyDamage;
     private BufferedImage image;
     private ArrayList<Bullet> playerBullets = new ArrayList<Bullet>();
     Timer t = new Timer(10, this);
@@ -52,6 +53,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         heartsController = new HeartsController(enemyController.getEnemyList(), player1);
         player1.setLives(3);
         planetHP = 100;
+        enemyDamage = 1;
         killCount = 0;
         highScore = 0;
         alreadyExecuted = false;
@@ -210,7 +212,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 enemies.remove(i);
                 enemyController.addEnemyKilled();
                 i--;
-                planetHP = planetHP - waveNumber;
+                if(enemyDamage < 5){
+                    enemyDamage++;
+                }
+                planetHP = planetHP - enemyDamage;
             }
         }
 
@@ -249,7 +254,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             Bullet bullet = playerBullets.get(i);
             for (int j = 0; j < enemies.size(); j++) {
                 Enemy enemy = enemies.get(j);
-                if (enemy != null && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
+                if (enemy != null && !enemy.getIsDead() && bullet.x >= enemy.x && bullet.x <= enemy.x + enemy.width &&
                         bullet.y >= enemy.y && bullet.y <= enemy.y + enemy.height) {
                     Sound sound = new Sound();
                     sound.setFile(1);
@@ -260,7 +265,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                             i--;
                         }
                     }
-                    if(!alreadyExecuted2) {
+                    if(!alreadyExecuted2 && !enemy.getIsDead()) {
                         heartsController.spawnHearts(g, enemy.x, enemy.y);
                         alreadyExecuted2 = true;
                     }
@@ -425,6 +430,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         alreadyExecuted = false;
         waveNumber = 1;
         planetHP = 100;
+        enemyDamage = 1;
         enemyController.getEnemyList().clear();
         heartsController.getH1().clear();
         playerBullets.clear();

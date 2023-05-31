@@ -15,6 +15,7 @@ public class Enemy extends Rectangle{
     private boolean isDead;
 
     long shootTimer = -1;
+    long shootInterval;
     private BufferedImage image;
     public Enemy(Color color, int x, int y, int width, int height, int dx, int dy) {
         setBounds(x,y,width,height);
@@ -23,6 +24,7 @@ public class Enemy extends Rectangle{
         this.dy = dy;
         setDx(-3);
         shoot = true;
+        shootInterval = 2000;
         try {
             image = ImageIO.read(getClass().getResource("enemy.png"));
         } catch (Exception e) {
@@ -33,6 +35,9 @@ public class Enemy extends Rectangle{
 
 
     public void tick() {
+        if(GamePanel.waveOver && shootInterval > 1000){
+            shootInterval -= 50;
+        }
         this.x += dx;
         this.y += dy;
         if(!isDead) {
@@ -40,12 +45,12 @@ public class Enemy extends Rectangle{
                 shootTimer = System.currentTimeMillis();
             }
 
-            if (System.currentTimeMillis() - shootTimer >= 1000) {
+            if (System.currentTimeMillis() - shootTimer >= shootInterval) {
                 shoot = true;
                 shootTimer = System.currentTimeMillis();
             }
 
-            if (System.currentTimeMillis() - shootTimer > 1000) {
+            if (System.currentTimeMillis() - shootTimer > shootInterval) {
                 shootTimer = -1;
                 shoot = false;
             }

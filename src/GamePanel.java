@@ -266,7 +266,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                         }
                     }
                     if(!alreadyExecuted2 && !enemy.getIsDead()) {
-                        heartsController.spawnHearts(g, enemy.x, enemy.y);
+                        heartsController.spawnHearts(enemy.x, enemy.y);
                         alreadyExecuted2 = true;
                     }
                     enemyController.setEnemyDead(j);
@@ -358,7 +358,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 waveOver = false;
                 waveOverTimer = -1;
                 enemyController.setSpawnEnabled(true);
-                planetHP += 10;
+                planetHP += 0;
             }
             if (System.currentTimeMillis() - waveOverTimer < 2000) {
                 Sound sound = new Sound();
@@ -401,9 +401,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         g.setFont(new Font("Impact", Font.BOLD, 100));
         g.drawString("G A M E  O V E R", PANEL_WIDTH / 2 - strWidth, PANEL_HEIGHT / 2 - 50);
         g.setFont(new Font("Impact", Font.BOLD, 25));
-        g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 150, PANEL_HEIGHT / 2 - 10);
-        g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 225, PANEL_HEIGHT/2 + 25);
-
+        g.drawString(gameOverMessage, PANEL_WIDTH / 2 - strWidth + 140, PANEL_HEIGHT / 2 - 10);
+        g.drawString("HIGH SCORE: " + highScore, PANEL_WIDTH / 2 - strWidth + 212, PANEL_HEIGHT/2 + 25);
     }
 
 

@@ -16,9 +16,8 @@ public class HeartsController {
     }
 
 
-    public void spawnHearts(Graphics g, int x, int y) {
-//        int random = (int) ((Math.random() * 10) + 1);
-        int random = 1;
+    public void spawnHearts(int x, int y) {
+        int random = (int) ((Math.random() * 3) + 1);
         if (random == 1) {
             hearts = new Hearts(1,x,y);
             h1.add(hearts);

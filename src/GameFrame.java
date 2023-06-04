@@ -61,6 +61,9 @@ public class GameFrame extends JFrame implements ActionListener {
             if(textField.getText().equals("")){
                 userName = "Blank";
             }
+            if(textField.getText().length() >= 15){
+                userName = textField.getText().substring(0,15) + "... ";
+            }
             // Start the game
             this.dispose();
             if(firstTime == 0) {
@@ -81,12 +84,11 @@ public class GameFrame extends JFrame implements ActionListener {
         } else if (e.getSource() == helpButton) {
             // Show the help dialog
             JOptionPane.showMessageDialog(this, "Controls:\nW- to go up \nA- to go left \nS- to go down \nD - to go right \nSpace Bar - to shoot" +
-                            "\n\nObjective: \nProtect the planet for as long as possible by shooting any enemies that appear and earn a high score\n\nLose Conditions:" +
+                            "\n\nObjective: \nProtect the planet for as long as possible by shooting any enemies that appear to achieve a high score\n\nLose Conditions:" +
                             "\nNumber of lives hit 0\nPlanet health points hits 0\n\nAdditional Notes: \nYou start with three lives and the planet " +
                             "starts at a hundred health points\nYour high score is calculated by the number of enemies" +
-                            " you defeated and the number of waves you cleared\nEnemies appear in waves, each increasing in difficulty" +
-                            "\nEach time you clear a wave enemies get faster, spawn quicker, and the amount of damage enemies can do to the planet increases " +
-                            "\nEvery time you clear a wave the planet recovers ten health points\nEach enemy has a chance to drop a heart which can increase the amount" +
+                            " you defeated and the number of waves you cleared\nEnemies appear in waves each increasing in difficulty" +
+                            "\nEach enemy has an one in third chance to drop a heart which can increase the number" +
                             " of lives you have left by one",
                     "Help", JOptionPane.INFORMATION_MESSAGE);
         } else if (e.getSource() == leaderBoardButton) {
